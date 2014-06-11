@@ -22,13 +22,14 @@ This is a README driven development process. No code has been written.
 * Optimizely can activate only available features.
 
 ## Manually Activating and Testing Features
+
+pinball automatically hooks up a url param named `?optly_FEATURE_NAME`.
+Just append it and pinball will fire the correct activated events.
+
 When you need to test a specific feature, there are two ways to activate it:
 
-### Before Optimizely is setup
-Append `?optly_xyz_test` to the URL.
-
 ### Features that span multiple URLs
-Ensure the Optimizely test is setup and add a query param to the URL: `?optimizely_x[EXPERIMENT_ID]=[VARIATION_ID]`
+After Optimizely is setup, you can activate it through their API by appending to the URL: `?optimizely_x[EXPERIMENT_ID]=[VARIATION_ID]`
 
 ### Post-Render (after page load)
 
