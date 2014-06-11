@@ -53,7 +53,7 @@ pinball.deactivate('feature-name');
 Features subscribe to events and respond when they're activated or deactivated. This can also be used to prevent initializing the component when never activated.
 
 It should only know if it's activated or deactivated. It should not know about Optimizely, cookies, or url params. (Single Responsibility Principle FTW)
-  
+
 One advantage to this approach is that you can activate features after the DOM is loaded.
 
 When pinball.js runs, it will call wither activate or deactivate for every feature. Deactivate can be called without ever calling activate.
@@ -104,8 +104,18 @@ define ['pinball'], (pinball) ->
 ## JsConfig
 The application has a list of features and passes them in the JsConfig object (e.g. `window.ApartmentGuide`). These define availability and what's activated by default.
 
-* Array of hashes for each feature
-    * Keys: `available`, `activated`, and `activatedByDefault`
+* Hash of hashes for each feature
+  * Key: feature name (lower case with underscores)
+    * Keys: `available`, and `activatedByDefault`
+
+Example
+```js
+features: {
+  feature_a: { available: true, activatedByDefault: true  },
+  feature_b: { available: true, activatedByDefault: false }
+}
+
+```
 
 # Example Execution Flow
 
@@ -115,9 +125,9 @@ The application has a list of features and passes them in the JsConfig object (e
 // Initialize app's JsConfig
 // window.ApartmentGuide is initialzied with JsConfig. Example:
 ApartmentGuide = {
-  features: [
+  features: {
     rrw: { available: true, activatedByDefault: false }
-  ]
+  }
 };
 
 // Activate Optimizely
@@ -128,9 +138,9 @@ requirejs.config({ /*...*/ });
 require(['es5-shim', 'es5-sham', 'main', 'optimizely-config', 'pinball'], function (shim, sham, Main, optimizelyConfig, pinball) {
   Main.init();
 
- // Register features and defaults
+ // Add features and defaults
  // Was previously ApartmentGuide.siteOptimization
- pinball.register(ApartmentGuide.features);
+ pinball.add(ApartmentGuide.features);
 
   // Activate from Optimizely space separated lists
   for experiment in window.rentPathExperiments
