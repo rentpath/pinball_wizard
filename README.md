@@ -23,7 +23,7 @@ This is a README driven development process. No code has been written.
 
 ## Manually Activating and Testing Features
 
-pinball automatically hooks up a url param named `?optly_FEATURE_NAME`.
+pinball automatically hooks up a url param named `?pinball_FEATURE_NAME`.
 Just append it and pinball will fire the correct activated events.
 
 When you need to test a specific feature, there are two ways to activate it:
@@ -45,7 +45,7 @@ pinball.deactivate('feature-name');
 1. Work with SO to determine the name. e.g. `xyz`.
 2. Add it to ConFusion through a migration.
 3. Add it to the JsConfig and deactivate it by default. (Investigate a single ruby file and do it automatically).
-4. Test by adding the name prefixed with `optly_` to the URL param. e.g. `?optly_xyz`.
+4. Test by adding the name prefixed with `pinball_` to the URL param. e.g. `?pinball_xyz`.
 5. Work with SO to setup the tests according to the name.
 
 ## Hooking Up Your Feature's Component
