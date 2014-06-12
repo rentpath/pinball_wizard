@@ -76,6 +76,5 @@ require ['pinball'], (pinball) ->
 
   describe '#debug', ->
 
-
-  # Hm, something with require isn't loading jasmine
+  # Jasmine 2.0 Works on window.onload and doesn't play well with requirejs
   jasmine.getEnv().execute()
