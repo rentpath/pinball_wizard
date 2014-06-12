@@ -2,33 +2,118 @@
 (function() {
   'use strict';
   define(function() {
-    var activate, add, buildFeature, features, get, reset, state;
+    var activate, add, buildFeature, deactivate, debug, features, get, isActive, reset, shouldIDebug, state, subscribe, subscribers, _log, _notifySubscribersOnActivate, _notifySubscribersOnDeactivate;
     features = {};
+    subscribers = {};
+    shouldIDebug = false;
+    _log = function(message, args, prefix) {
+      if (args == null) {
+        args = {};
+      }
+      if (prefix == null) {
+        prefix = '[pinball.js]';
+      }
+      if (shouldIDebug) {
+        return console.log("" + prefix + " " + message, args);
+      }
+    };
+    _notifySubscribersOnActivate = function(name) {
+      var subscriber, _i, _len, _ref, _results;
+      if (subscribers[name] == null) {
+        subscribers[name] = [];
+      }
+      _ref = subscribers[name];
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        subscriber = _ref[_i];
+        _results.push(subscriber.onActivate());
+      }
+      return _results;
+    };
+    _notifySubscribersOnDeactivate = function(name) {
+      var subscriber, _i, _len, _ref, _results;
+      if (subscribers[name] == null) {
+        subscribers[name] = [];
+      }
+      _ref = subscribers[name];
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        subscriber = _ref[_i];
+        _results.push(subscriber.onDeactivate());
+      }
+      return _results;
+    };
     add = function(list) {
-      var attributes, name, _results;
+      var feature, name, _results;
       _results = [];
       for (name in list) {
-        attributes = list[name];
-        _results.push(features[name] = buildFeature(attributes.available, attributes.activatedByDefault));
+        feature = list[name];
+        features[name] = buildFeature(feature.available, feature.activeByDefault);
+        _log("Added feature " + name + ". %O", feature);
+        if (feature.activeByDefault) {
+          _results.push(activate(name));
+        } else {
+          _results.push(void 0);
+        }
       }
       return _results;
     };
     get = function(name) {
       return features[name];
     };
-    buildFeature = function(available, activatedByDefault) {
+    buildFeature = function(available, activeByDefault) {
       return {
-        available: available,
-        activated: false,
-        activatedByDefault: activatedByDefault
+        available: available != null ? available : true,
+        active: false,
+        activeByDefault: activeByDefault != null ? activeByDefault : false
       };
     };
     activate = function(name) {
       var feature;
       feature = get(name);
-      if (feature != null ? feature.available : void 0) {
-        return feature.activated = true;
+      if ((feature != null) === false) {
+        return _log("Attempted to activate " + name + ", but it was not found.");
+      } else if (feature != null ? feature.available : void 0) {
+        if (feature.active) {
+          return _log("Attempted to activate " + name + ", but it is already active. %O", feature);
+        } else {
+          _log("Activate feature " + name + ". %O", feature);
+          feature.active = true;
+          return _notifySubscribersOnActivate(name);
+        }
+      } else {
+        return _log("Attempted to activate " + name + ", but it is not available. %O", feature);
       }
+    };
+    deactivate = function(name) {
+      var feature;
+      feature = get(name);
+      if ((feature != null) === false) {
+        return _log("Attempted to deactivate " + name + ", but it was not found.");
+      } else if (feature != null ? feature.active : void 0) {
+        if (feature.active) {
+          _log("Dectivate feature " + name + ". %O", feature);
+          feature.active = false;
+          return _notifySubscribersOnDeactivate(name);
+        } else {
+          return _log("Attempted to deactivate " + name + ", but it is already deactivated. %O", feature);
+        }
+      } else {
+        return _log("Attempted to deactivate " + name + ", but it was already inactive. %O", feature);
+      }
+    };
+    isActive = function(name) {
+      var _ref;
+      return (_ref = get(name)) != null ? _ref.active : void 0;
+    };
+    subscribe = function(name, onActivate, onDeactivate) {
+      if (subscribers[name] == null) {
+        subscribers[name] = [];
+      }
+      return subscribers[name].push({
+        onActivate: onActivate != null ? onActivate : function() {},
+        onDeactivate: onDeactivate != null ? onDeactivate : function() {}
+      });
     };
     state = function() {
       return features;
@@ -36,12 +121,19 @@
     reset = function() {
       return features = {};
     };
+    debug = function() {
+      return shouldIDebug = true;
+    };
     return {
       add: add,
       get: get,
       activate: activate,
+      deactivate: deactivate,
+      isActive: isActive,
+      subscribe: subscribe,
       state: state,
-      reset: reset
+      reset: reset,
+      debug: debug
     };
   });
 
