@@ -33,6 +33,7 @@ require ['pinball'], (pinball) ->
       pinball.add
         a: { available: true,  activeByDefault: true }
       expect(pinball.get('a')).toEqual
+        name: 'a'
         available: true
         active: true
         activeByDefault: true
@@ -47,6 +48,31 @@ require ['pinball'], (pinball) ->
         a: { activeByDefault: false }
       expect(pinball.isActive('a')).toEqual(false)
 
+    describe 'with a url param', ->
+
+      originalPathname = null
+
+      beforeEach ->
+        originalPathname = window.location.pathname
+
+      afterEach ->
+        window.history.replaceState(null, null, originalPathname)
+
+      it 'is not activate when mismatched', ->
+        urlParam = '?pinball_foo'
+        window.history.replaceState(null, null, window.location.pathname + urlParam)
+        pinball.add
+          a: {}
+        expect(pinball.isActive('a')).toEqual(false)
+
+      it 'is activate with a missing url param', ->
+        urlParam = '?pinball_a'
+        # Mock a different url
+        window.history.replaceState(null, null, window.location.pathname + urlParam)
+        pinball.add
+          a: {}
+        expect(pinball.isActive('a')).toEqual(true)
+
   describe '#state', ->
     it 'displays a list based on state', ->
       pinball.add
@@ -55,9 +81,9 @@ require ['pinball'], (pinball) ->
         c: { available: false}
 
       expect(pinball.state()).toEqual({
-        a: { available: true,  active: true,  activeByDefault: true  }
-        b: { available: true,  active: false, activeByDefault: false }
-        c: { available: false, active: false, activeByDefault: false }
+        a: { name: 'a', available: true,  active: true,  activeByDefault: true  }
+        b: { name: 'b', available: true,  active: false, activeByDefault: false }
+        c: { name: 'c', available: false, active: false, activeByDefault: false }
       })
 
   describe '#activate', ->
@@ -68,6 +94,7 @@ require ['pinball'], (pinball) ->
       pinball.activate 'a'
 
       expect(pinball.get('a')).toEqual
+        name: 'a'
         available: true
         active: true
         activeByDefault: true
@@ -78,6 +105,7 @@ require ['pinball'], (pinball) ->
       pinball.activate 'a'
 
       expect(pinball.get('a')).toEqual
+        name: 'a'
         available: false
         active: false
         activeByDefault: false
@@ -90,6 +118,7 @@ require ['pinball'], (pinball) ->
       pinball.deactivate 'a'
 
       expect(pinball.get('a')).toEqual
+        name: 'a'
         available: true
         active: false
         activeByDefault: true
@@ -108,6 +137,7 @@ require ['pinball'], (pinball) ->
       expect(pinball.isActive('a')).toEqual(false)
 
       expect(pinball.get('a')).toEqual
+        name: 'a'
         available: true
         active: false
         activeByDefault: false

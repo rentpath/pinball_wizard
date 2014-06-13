@@ -5,6 +5,7 @@ define ->
   features = {}
   subscribers = {}
 
+  urlPrefix = 'pinball_'
   showLog = false
 
   _log = (message, args = {}, prefix = '[pinball.js]') ->
@@ -23,19 +24,27 @@ define ->
     for subscriber in subscribers[name]
       subscriber.onDeactivate()
 
+  _urlMatches = (name) ->
+    window.location.search.indexOf("#{urlPrefix}#{name}") != -1
+
+  _shouldActivate = (feature) ->
+    feature.activeByDefault or _urlMatches(feature.name)
+
   add = (list) ->
     for name, feature of list
-      features[name] = _buildFeature(feature.available, feature.activeByDefault)
+      feature = _buildFeature(name, feature.available, feature.activeByDefault)
+      features[name] = feature
       _log "Added feature #{name}. %O", feature
 
-      if feature.activeByDefault
-        activate(name)
+      if _shouldActivate(feature)
+        activate(feature.name)
 
   # TODO: Move to null object pattern
   get = (name) ->
     features[name]
 
-  _buildFeature = (available, activeByDefault) ->
+  _buildFeature = (name, available, activeByDefault) ->
+    name:            name
     available:       if available? then available else true
     active:          false
     activeByDefault: if activeByDefault? then activeByDefault else false

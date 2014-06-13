@@ -2,9 +2,10 @@
 (function() {
   'use strict';
   define(function() {
-    var activate, add, deactivate, debug, features, get, isActive, reset, showLog, state, subscribe, subscribers, _buildFeature, _buildSubscriber, _log, _notifySubscriberOnActivate, _notifySubscribersOnActivate, _notifySubscribersOnDeactivate;
+    var activate, add, deactivate, debug, features, get, isActive, reset, showLog, state, subscribe, subscribers, urlPrefix, _buildFeature, _buildSubscriber, _log, _notifySubscriberOnActivate, _notifySubscribersOnActivate, _notifySubscribersOnDeactivate, _shouldActivate, _urlMatches;
     features = {};
     subscribers = {};
+    urlPrefix = 'pinball_';
     showLog = false;
     _log = function(message, args, prefix) {
       if (args == null) {
@@ -46,15 +47,22 @@
       }
       return _results;
     };
+    _urlMatches = function(name) {
+      return window.location.search.indexOf("" + urlPrefix + name) !== -1;
+    };
+    _shouldActivate = function(feature) {
+      return feature.activeByDefault || _urlMatches(feature.name);
+    };
     add = function(list) {
       var feature, name, _results;
       _results = [];
       for (name in list) {
         feature = list[name];
-        features[name] = _buildFeature(feature.available, feature.activeByDefault);
+        feature = _buildFeature(name, feature.available, feature.activeByDefault);
+        features[name] = feature;
         _log("Added feature " + name + ". %O", feature);
-        if (feature.activeByDefault) {
-          _results.push(activate(name));
+        if (_shouldActivate(feature)) {
+          _results.push(activate(feature.name));
         } else {
           _results.push(void 0);
         }
@@ -64,8 +72,9 @@
     get = function(name) {
       return features[name];
     };
-    _buildFeature = function(available, activeByDefault) {
+    _buildFeature = function(name, available, activeByDefault) {
       return {
+        name: name,
         available: available != null ? available : true,
         active: false,
         activeByDefault: activeByDefault != null ? activeByDefault : false

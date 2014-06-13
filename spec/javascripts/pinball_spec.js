@@ -40,6 +40,7 @@
           }
         });
         return expect(pinball.get('a')).toEqual({
+          name: 'a',
           available: true,
           active: true,
           activeByDefault: true
@@ -53,13 +54,41 @@
         });
         return expect(pinball.isActive('a')).toEqual(true);
       });
-      return it('does not activate if activeByDefault is false', function() {
+      it('does not activate if activeByDefault is false', function() {
         pinball.add({
           a: {
             activeByDefault: false
           }
         });
         return expect(pinball.isActive('a')).toEqual(false);
+      });
+      return describe('with a url param', function() {
+        var originalPathname;
+        originalPathname = null;
+        beforeEach(function() {
+          return originalPathname = window.location.pathname;
+        });
+        afterEach(function() {
+          return window.history.replaceState(null, null, originalPathname);
+        });
+        it('is not activate when mismatched', function() {
+          var urlParam;
+          urlParam = '?pinball_foo';
+          window.history.replaceState(null, null, window.location.pathname + urlParam);
+          pinball.add({
+            a: {}
+          });
+          return expect(pinball.isActive('a')).toEqual(false);
+        });
+        return it('is activate with a missing url param', function() {
+          var urlParam;
+          urlParam = '?pinball_a';
+          window.history.replaceState(null, null, window.location.pathname + urlParam);
+          pinball.add({
+            a: {}
+          });
+          return expect(pinball.isActive('a')).toEqual(true);
+        });
       });
     });
     describe('#state', function() {
@@ -75,16 +104,19 @@
         });
         return expect(pinball.state()).toEqual({
           a: {
+            name: 'a',
             available: true,
             active: true,
             activeByDefault: true
           },
           b: {
+            name: 'b',
             available: true,
             active: false,
             activeByDefault: false
           },
           c: {
+            name: 'c',
             available: false,
             active: false,
             activeByDefault: false
@@ -102,6 +134,7 @@
         });
         pinball.activate('a');
         return expect(pinball.get('a')).toEqual({
+          name: 'a',
           available: true,
           active: true,
           activeByDefault: true
@@ -116,6 +149,7 @@
         });
         pinball.activate('a');
         return expect(pinball.get('a')).toEqual({
+          name: 'a',
           available: false,
           active: false,
           activeByDefault: false
@@ -132,6 +166,7 @@
         });
         pinball.deactivate('a');
         return expect(pinball.get('a')).toEqual({
+          name: 'a',
           available: true,
           active: false,
           activeByDefault: true
@@ -151,6 +186,7 @@
       return it('is false if not activated', function() {
         expect(pinball.isActive('a')).toEqual(false);
         return expect(pinball.get('a')).toEqual({
+          name: 'a',
           available: true,
           active: false,
           activeByDefault: false
