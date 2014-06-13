@@ -2,10 +2,10 @@
 (function() {
   'use strict';
   define(function() {
-    var activate, add, buildFeature, deactivate, debug, features, get, isActive, reset, shouldIDebug, state, subscribe, subscribers, _log, _notifySubscribersOnActivate, _notifySubscribersOnDeactivate;
+    var activate, add, deactivate, debug, features, get, isActive, reset, showLog, state, subscribe, subscribers, _buildFeature, _buildSubscriber, _log, _notifySubscriberOnActivate, _notifySubscribersOnActivate, _notifySubscribersOnDeactivate;
     features = {};
     subscribers = {};
-    shouldIDebug = false;
+    showLog = false;
     _log = function(message, args, prefix) {
       if (args == null) {
         args = {};
@@ -13,7 +13,7 @@
       if (prefix == null) {
         prefix = '[pinball.js]';
       }
-      if (shouldIDebug) {
+      if (showLog) {
         return console.log("" + prefix + " " + message, args);
       }
     };
@@ -26,9 +26,12 @@
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         subscriber = _ref[_i];
-        _results.push(subscriber.onActivate());
+        _results.push(_notifySubscriberOnActivate(subscriber));
       }
       return _results;
+    };
+    _notifySubscriberOnActivate = function(subscriber) {
+      return subscriber.onActivate();
     };
     _notifySubscribersOnDeactivate = function(name) {
       var subscriber, _i, _len, _ref, _results;
@@ -48,7 +51,7 @@
       _results = [];
       for (name in list) {
         feature = list[name];
-        features[name] = buildFeature(feature.available, feature.activeByDefault);
+        features[name] = _buildFeature(feature.available, feature.activeByDefault);
         _log("Added feature " + name + ". %O", feature);
         if (feature.activeByDefault) {
           _results.push(activate(name));
@@ -61,7 +64,7 @@
     get = function(name) {
       return features[name];
     };
-    buildFeature = function(available, activeByDefault) {
+    _buildFeature = function(available, activeByDefault) {
       return {
         available: available != null ? available : true,
         active: false,
@@ -91,13 +94,9 @@
       if ((feature != null) === false) {
         return _log("Attempted to deactivate " + name + ", but it was not found.");
       } else if (feature != null ? feature.active : void 0) {
-        if (feature.active) {
-          _log("Dectivate feature " + name + ". %O", feature);
-          feature.active = false;
-          return _notifySubscribersOnDeactivate(name);
-        } else {
-          return _log("Attempted to deactivate " + name + ", but it is already deactivated. %O", feature);
-        }
+        _log("Dectivate feature " + name + ". %O", feature);
+        feature.active = false;
+        return _notifySubscribersOnDeactivate(name);
       } else {
         return _log("Attempted to deactivate " + name + ", but it was already inactive. %O", feature);
       }
@@ -106,14 +105,22 @@
       var _ref;
       return (_ref = get(name)) != null ? _ref.active : void 0;
     };
+    _buildSubscriber = function(onActivate, onDeactivate) {
+      return {
+        onActivate: onActivate != null ? onActivate : function() {},
+        onDeactivate: onDeactivate != null ? onDeactivate : function() {}
+      };
+    };
     subscribe = function(name, onActivate, onDeactivate) {
+      var subscriber;
+      subscriber = _buildSubscriber(onActivate, onDeactivate);
       if (subscribers[name] == null) {
         subscribers[name] = [];
       }
-      return subscribers[name].push({
-        onActivate: onActivate != null ? onActivate : function() {},
-        onDeactivate: onDeactivate != null ? onDeactivate : function() {}
-      });
+      subscribers[name].push(subscriber);
+      if (isActive(name)) {
+        return _notifySubscriberOnActivate(subscriber);
+      }
     };
     state = function() {
       return features;
@@ -122,7 +129,7 @@
       return features = {};
     };
     debug = function() {
-      return shouldIDebug = true;
+      return showLog = true;
     };
     return {
       add: add,

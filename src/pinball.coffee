@@ -5,15 +5,18 @@ define ->
   features = {}
   subscribers = {}
 
-  shouldIDebug = false
+  showLog = false
 
   _log = (message, args = {}, prefix = '[pinball.js]') ->
-    console.log("#{prefix} #{message}", args) if shouldIDebug
+    console.log("#{prefix} #{message}", args) if showLog
 
   _notifySubscribersOnActivate = (name) ->
     subscribers[name] ?= []
     for subscriber in subscribers[name]
-      subscriber.onActivate()
+      _notifySubscriberOnActivate(subscriber)
+
+  _notifySubscriberOnActivate = (subscriber) ->
+    subscriber.onActivate()
 
   _notifySubscribersOnDeactivate = (name) ->
     subscribers[name] ?= []
@@ -22,7 +25,7 @@ define ->
 
   add = (list) ->
     for name, feature of list
-      features[name] = buildFeature(feature.available, feature.activeByDefault)
+      features[name] = _buildFeature(feature.available, feature.activeByDefault)
       _log "Added feature #{name}. %O", feature
 
       if feature.activeByDefault
@@ -32,7 +35,7 @@ define ->
   get = (name) ->
     features[name]
 
-  buildFeature = (available, activeByDefault) ->
+  _buildFeature = (available, activeByDefault) ->
     available:       if available? then available else true
     active:          false
     activeByDefault: if activeByDefault? then activeByDefault else false
@@ -58,23 +61,24 @@ define ->
     if feature? == false
       _log "Attempted to deactivate #{name}, but it was not found."
     else if feature?.active
-      if feature.active
-        _log "Dectivate feature #{name}. %O", feature
-        feature.active = false
-        _notifySubscribersOnDeactivate(name)
-      else
-        _log "Attempted to deactivate #{name}, but it is already deactivated. %O", feature
+      _log "Dectivate feature #{name}. %O", feature
+      feature.active = false
+      _notifySubscribersOnDeactivate(name)
     else
       _log "Attempted to deactivate #{name}, but it was already inactive. %O", feature
 
   isActive = (name) ->
     get(name)?.active
 
+  _buildSubscriber = (onActivate, onDeactivate) ->
+    onActivate:   if onActivate?   then onActivate else ->
+    onDeactivate: if onDeactivate? then onDeactivate else ->
+
   subscribe = (name, onActivate, onDeactivate) ->
+    subscriber = _buildSubscriber(onActivate, onDeactivate)
     subscribers[name] ?= []
-    subscribers[name].push
-      onActivate:   if onActivate?   then onActivate else ->
-      onDeactivate: if onDeactivate? then onDeactivate else ->
+    subscribers[name].push(subscriber)
+    _notifySubscriberOnActivate(subscriber) if isActive(name)
 
   state = ->
     features
@@ -83,7 +87,7 @@ define ->
     features = {}
 
   debug = ->
-    shouldIDebug = true
+    showLog = true
 
   # Exports
   add:        add

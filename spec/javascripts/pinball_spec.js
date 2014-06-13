@@ -201,12 +201,21 @@
           });
           return expect(callback).toHaveBeenCalled();
         });
-        return it('calls when subscribing then adding and then activating a feature', function() {
+        it('calls when subscribing then adding and then activating a feature', function() {
           pinball.subscribe('a', callback);
           pinball.add({
             a: {}
           });
           pinball.activate('a');
+          return expect(callback).toHaveBeenCalled();
+        });
+        return it('calls when subscribing to an already active feature', function() {
+          pinball.add({
+            a: {
+              activeByDefault: true
+            }
+          });
+          pinball.subscribe('a', callback);
           return expect(callback).toHaveBeenCalled();
         });
       });

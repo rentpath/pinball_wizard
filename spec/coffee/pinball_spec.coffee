@@ -157,6 +157,12 @@ require ['pinball'], (pinball) ->
         pinball.activate 'a'
         expect(callback).toHaveBeenCalled()
 
+      it 'calls when subscribing to an already active feature', ->
+        pinball.add
+          a: { activeByDefault: true }
+        pinball.subscribe 'a', callback
+        expect(callback).toHaveBeenCalled()
+
     describe 'when the activate callback should not be called', ->
       it 'does not call when the feature is missing', ->
         pinball.subscribe 'a', callback
