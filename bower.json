@@ -1,0 +1,15 @@
+{
+  "name": "pinball",
+  "version": "0.0.1",
+  "main": "pinball.js",
+  "dependencies": {
+  },
+  "devDependencies": {
+    "requirejs": null
+  },
+  "ignore": [
+    "spec/**.*",
+    "package.json",
+    "README.md"
+  ]
+}
