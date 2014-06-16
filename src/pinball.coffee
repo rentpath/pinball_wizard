@@ -9,7 +9,8 @@ define ->
   showLog = false
 
   _log = (message, args = {}, prefix = '[pinball.js]') ->
-    console.log("#{prefix} #{message}", args) if showLog
+    if showLog && window.console && window.console.log
+      console.log("#{prefix} #{message}", args)
 
   _notifySubscribersOnActivate = (name) ->
     subscribers[name] ?= []

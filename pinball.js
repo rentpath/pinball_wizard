@@ -14,7 +14,7 @@
       if (prefix == null) {
         prefix = '[pinball.js]';
       }
-      if (showLog) {
+      if (showLog && window.console && window.console.log) {
         return console.log("" + prefix + " " + message, args);
       }
     };
