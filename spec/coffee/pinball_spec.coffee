@@ -1,5 +1,8 @@
 require ['pinball'], (pinball) ->
 
+  # TODO:
+  # - Method queue like Google Analytics
+
   beforeEach ->
     pinball.debug()
     pinball.reset()
