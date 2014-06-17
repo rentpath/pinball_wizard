@@ -196,6 +196,13 @@ require ['pinball'], (pinball) ->
         pinball.subscribe 'a', callback
         expect(callback).toHaveBeenCalled()
 
+      it '', ->
+        pinball.activate 'a'
+        pinball.add
+          a: { available: false }
+        pinball.subscribe 'a', callback
+        expect(callback).toHaveBeenCalled()
+
     describe 'when the activate callback should not be called', ->
       it 'does not call when the feature is missing', ->
         pinball.subscribe 'a', callback
@@ -272,6 +279,12 @@ require ['pinball'], (pinball) ->
         pinball.activate 'a'
         pinball.deactivate 'a'
         expect(callback).not.toHaveBeenCalled()
+
+  describe '#push', ->
+    it 'calls the function with the first entry and the args for the rest', ->
+      spyOn(pinball, 'activate')
+      pinball.push ['activate','my-feature']
+      expect(pinball.activate).toHaveBeenCalledWith('my-feature')
 
   # Jasmine 2.0 Works on window.onload and doesn't play well with requirejs
   jasmine.getEnv().execute()

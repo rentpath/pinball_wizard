@@ -245,10 +245,20 @@
           pinball.activate('a');
           return expect(callback).toHaveBeenCalled();
         });
-        return it('calls when subscribing to an already active feature', function() {
+        it('calls when subscribing to an already active feature', function() {
           pinball.add({
             a: {
               activeByDefault: true
+            }
+          });
+          pinball.subscribe('a', callback);
+          return expect(callback).toHaveBeenCalled();
+        });
+        return it('', function() {
+          pinball.activate('a');
+          pinball.add({
+            a: {
+              available: false
             }
           });
           pinball.subscribe('a', callback);
@@ -350,6 +360,13 @@
         pinball.activate('a');
         pinball.deactivate('a');
         return expect(callback).not.toHaveBeenCalled();
+      });
+    });
+    describe('#push', function() {
+      return it('calls the function with the first entry and the args for the rest', function() {
+        spyOn(pinball, 'activate');
+        pinball.push(['activate', 'my-feature']);
+        return expect(pinball.activate).toHaveBeenCalledWith('my-feature');
       });
     });
     return jasmine.getEnv().execute();
