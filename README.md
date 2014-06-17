@@ -139,3 +139,12 @@ This is a [README driven development](http://tom.preston-werner.com/2010/08/23/r
 
 - Build a UI panel that shows the status of each feature. Allow
   toggling. Ship it as a bookmarklet or Chrome developer tools panel.
+
+## Credits
+
+- [ElHeineken](http://commons.wikimedia.org/wiki/User:ElHeineken)
+- http://creativecommons.org/licenses/by/3.0/
+
+## License
+
+TBD
