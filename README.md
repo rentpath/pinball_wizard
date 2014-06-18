@@ -142,8 +142,9 @@ This is a [README driven development](http://tom.preston-werner.com/2010/08/23/r
 
 ## Credits
 
-- [ElHeineken](http://commons.wikimedia.org/wiki/User:ElHeineken)
-- http://creativecommons.org/licenses/by/3.0/
+  - Pinball photo:
+    - [ElHeineken](http://commons.wikimedia.org/wiki/User:ElHeineken)
+    - http://creativecommons.org/licenses/by/3.0/
 
 ## License
 
