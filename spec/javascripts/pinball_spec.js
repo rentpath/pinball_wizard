@@ -245,20 +245,10 @@
           pinball.activate('a');
           return expect(callback).toHaveBeenCalled();
         });
-        it('calls when subscribing to an already active feature', function() {
+        return it('calls when subscribing to an already active feature', function() {
           pinball.add({
             a: {
               activeByDefault: true
-            }
-          });
-          pinball.subscribe('a', callback);
-          return expect(callback).toHaveBeenCalled();
-        });
-        return it('', function() {
-          pinball.activate('a');
-          pinball.add({
-            a: {
-              available: false
             }
           });
           pinball.subscribe('a', callback);

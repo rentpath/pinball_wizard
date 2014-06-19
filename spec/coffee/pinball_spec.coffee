@@ -1,8 +1,5 @@
 require ['pinball'], (pinball) ->
 
-  # TODO:
-  # - Method queue like Google Analytics
-
   beforeEach ->
     pinball.debug()
     pinball.reset()
@@ -193,13 +190,6 @@ require ['pinball'], (pinball) ->
       it 'calls when subscribing to an already active feature', ->
         pinball.add
           a: { activeByDefault: true }
-        pinball.subscribe 'a', callback
-        expect(callback).toHaveBeenCalled()
-
-      it '', ->
-        pinball.activate 'a'
-        pinball.add
-          a: { available: false }
         pinball.subscribe 'a', callback
         expect(callback).toHaveBeenCalled()
 
