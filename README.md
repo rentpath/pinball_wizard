@@ -2,46 +2,110 @@
 
 <img src="http://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Pinball_Flippers_-_Demolition_Man.JPG/1024px-Pinball_Flippers_-_Demolition_Man.JPG" width="100%">
 
-pinball.js brings feature flipping into a simple and uniform API.
+pinball brings feature flipping into a simple and uniform API.
 
-## What is a "feature"?
+## What is a *feature*?
 
-A set of HTML, JavaScript and CSS that can be flippable.
+A set of Ruby, HTML, JavaScript, and CSS that can be turned on or off.
 
-An individual component (e.g. the RRW) that has several attributes:
+An feature has several attributes:
 
 * *Active*: If it is currently turned on and running.
-* *ActiveByDefault*: Self-explanatory.
-* *Available*: If it can be activated. Defaults to `true`. Used with other integrations.
+* *ActiveByDefault*: If it should activate without by itself.
+* *Available*: If it can be activated. Defaults to `true`. Used primarily with other integrations.
 
 
-## Build Process
-1. Determine a name. e.g. `xyz`.
-3. Add it to the [JsConfig](#jsconfig) and set `activeByDefault` to `false`.
-4. [Build the JavaScript component](#javascript).
-5. Build the corresponding [HTML](#html) and [CSS](#css)
-4. Test by adding the name prefixed with `pinball_` to the URL param. e.g. `?pinball_xyz`.
+## Building
+1. Define and register the feature in the [Ruby app](#ruby) and set `active_by_default` to `false`.
+2. Build the corresponding [HTML](#html) and [CSS](#css)
+3. Build the [JavaScript component](#javascript).
+4. Test by adding the name prefixed with `pinball_` to the URL param. e.g. `?pinball_example`.
 5. *Optional:* Work with SO to setup the tests according to the name.
+
+## Ruby
+
+Define your feature in `app/features`.
+
+```
+# app/features/example.rb
+
+class ExampleFeature
+  include Pinball::Feature
+  available true
+  active_by_default false
+end
+
+Pinball::Registry.add(ExampleFeature)
+
+```
+
+You can also pass in a block for situtations where availability is conditional.
+
+```
+# app/features/example.rb
+
+class ExampleFeature
+  include Pinball::Feature
+
+  available do
+    # conditionally return true/false
+  end
+
+  active_by_default do
+    # conditionally return true/false
+  end
+end
+
+Pinball::Registry.add(ExampleFeature)
+
+```
+
+## HTML
+
+Once the feature is registered, you can use slim to include the HTML partial found at `app/views/features/example.slim`. This is only included if the feature is available, which allows the HTML to stay small.
+
+```slim
+= feature 'example'
+```
+
+To use a different partial for the same feature, pass in the `partial:` key. This will use `app/views/features/example_button.slim`.
+
+If the feature is not active by default, it's recommended to hide the HTML with inline or external CSS.
+
+```slim
+= feature 'example', partial: :example_button'
+```
+
+## CSS
+
+Pinball doesn't have any CSS specific helpers, but recommends a convention similar to the Ruby version:
+
+```scss
+// public/scss/features/_example.scss
+
+#example {}
+```
+
+Then include it on the main file with `@import 'features/example'`
+
 
 ## JavaScript
 
-Features subscribe to events and respond when they're activated or deactivated. This can also be used to prevent initializing the component when never activated.
+Features subscribe to events and respond when they're activated or deactivated. It no longer needs to know about Optimizely, cookies, or url params. (Single Responsibility Principle FTW)
 
-It should only know if it's active or inactive. It should not know about Optimizely, cookies, or url params. (Single Responsibility Principle FTW)
+One advantage to this approach is that you can activate features after the DOM is loaded (for testing).
 
-One advantage to this approach is that you can activate features after the DOM is loaded.
-
-When pinball.js runs, it will call wither activate or deactivate for every feature. Deactivate can be called without ever calling activate.
+When pinball runs, it will activate the features.
 
 
-### RequireJS Module *(pseudo-code)*
+### Example AMD/RequireJS Module
 
 ```coffee
 define ['pinball'], (pinball) ->
 
   # Define feature component functions here ...
 
-  pinball.subscribe 'feature-name',
+  pinball.subscribe 'example',
     ->
       # callback when activated. e.g. show it
     ->
@@ -50,7 +114,7 @@ define ['pinball'], (pinball) ->
   # Return component functions to expose.
 ```
 
-### Flight Component *(pseudo-code)*
+### Example Flight Component
 
 *TODO*: Test the event ordering with this implementation.
 
@@ -58,54 +122,44 @@ define ['pinball'], (pinball) ->
 define ['pinball'], (pinball) ->
 
   @after 'initialize', ->
-    pinball.subscribe 'feature-name',
-      ->
+    pinball.subscribe 'example',
+      =>
         # callback when activated. e.g. show it
-      ->
+      =>
         # callback when deactivated. e.g. hide it.
 
 ```
 
 ### Asking *(pseudo-code)*
 
-As an alternative, a feature may check if it's active. This method is not preferred.
+As an alternative, a feature may check if it's active. This method is not preferred since it only occurs once during page load.
 
 ```coffee
 define ['pinball'], (pinball) ->
 
-    if pinball.isActive('feature-name')
+    if pinball.isActive('example')
         # Do something
 ```
-
-## HTML
-
-```slim
-- feature :xyz
-  div#foo
-```
-
-## CSS
-Separate SCSS file under `app/public/scss/features/_xyz.scss`.
 
 ## Activating and Testing Features
 
 ### With a URL Param
-Append `?pinball_xyz` to the URL.
+Append `?pinball_example` to the URL.
 
 ### Post-Render (after page load)
 
 ```javascript
-pinball.activate('feature-name');
+pinball.activate('example');
 ```
 
 ```javascript
-pinball.deactivate('feature-name');
+pinball.deactivate('example');
 ```
 
 Activating a feature that is already active will have no effect.
 
 ## JsConfig
-The application has a list of features and passes them in the JsConfig object (e.g. `window.ApartmentGuide`). These define availability and what's active by default.
+The application keeps a list of features and passes them in the JsConfig object (e.g. `window.ApartmentGuide`). These define availability and what's active by default. AG is hooked up to Pinball to automatically be aware of these. No additional code is necessary.
 
 * Array of hashes for each feature
     * Keys: `available`, `active`, and `activeByDefault`
@@ -126,14 +180,20 @@ pinball.state();
 * [Optimizely](https://github.com/primedia/pinball.js/wiki/Integrating-a-Feature-with-Optimizely)
 * [ConFusion](https://github.com/primedia/pinball.js/wiki/Integrating-a-Feature-with-ConFusion)
 
+## Tests
+
+Both `rspec` and `jasmine` can be run with the `rspec` and `rake jasmine` commands.
+
+
 ## Contributing
 
 This is a [README driven development](http://tom.preston-werner.com/2010/08/23/readme-driven-development.html) process, please contribute by modifying this document. Code will come later.
 
+To compile the CoffeeScript and run Jasmine, start foreman: `foreman start`.
+
 ## Next
 
-- Handle disabling the reverse feature. e.g. when optimizely activates a new search UI, it should deactivate the previous one.
-- Define the ruby equivalent of features to aid the Confusion -> JsConfig flow.
+- Handle reverse/opposite features. e.g. when optimizely activates a new search UI, it should deactivate the previous one.
 
 ## Future Versions
 
