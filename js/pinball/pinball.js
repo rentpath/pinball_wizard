@@ -2,7 +2,7 @@
 (function() {
   'use strict';
   define(function() {
-    var activate, add, deactivate, debug, features, get, isActive, reset, showLog, state, subscribe, subscribers, urlPrefix, _buildFeature, _buildSubscriber, _log, _notifySubscriberOnActivate, _notifySubscribersOnActivate, _notifySubscribersOnDeactivate, _shouldActivate, _urlMatches;
+    var activate, add, deactivate, debug, exports, features, get, isActive, push, reset, showLog, state, subscribe, subscribers, urlPrefix, _buildFeature, _buildSubscriber, _log, _notifySubscriberOnActivate, _notifySubscribersOnActivate, _notifySubscribersOnDeactivate, _shouldActivate, _urlMatches;
     features = {};
     subscribers = {};
     urlPrefix = 'pinball_';
@@ -15,7 +15,7 @@
         prefix = '[pinball.js]';
       }
       if (showLog && window.console && window.console.log) {
-        return console.log("" + prefix + " " + message, args);
+        console.log("" + prefix + " " + message, args);
       }
     };
     _notifySubscribersOnActivate = function(name) {
@@ -27,11 +27,12 @@
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         subscriber = _ref[_i];
-        _results.push(_notifySubscriberOnActivate(subscriber));
+        _results.push(_notifySubscriberOnActivate(subscriber, name));
       }
       return _results;
     };
-    _notifySubscriberOnActivate = function(subscriber) {
+    _notifySubscriberOnActivate = function(subscriber, name) {
+      _log('Notify subscriber that %O is activate', name);
       return subscriber.onActivate();
     };
     _notifySubscribersOnDeactivate = function(name) {
@@ -122,14 +123,20 @@
     };
     subscribe = function(name, onActivate, onDeactivate) {
       var subscriber;
+      _log('Added subscriber to %O', name);
       subscriber = _buildSubscriber(onActivate, onDeactivate);
       if (subscribers[name] == null) {
         subscribers[name] = [];
       }
       subscribers[name].push(subscriber);
       if (isActive(name)) {
-        return _notifySubscriberOnActivate(subscriber);
+        return _notifySubscriberOnActivate(subscriber, name);
       }
+    };
+    push = function(params) {
+      var method;
+      method = params.shift();
+      return this[method].apply(this, params);
     };
     state = function() {
       return features;
@@ -140,17 +147,25 @@
     debug = function() {
       return showLog = true;
     };
-    return {
+    exports = {
       add: add,
       get: get,
       activate: activate,
       deactivate: deactivate,
       isActive: isActive,
       subscribe: subscribe,
+      push: push,
       state: state,
       reset: reset,
       debug: debug
     };
+    if (typeof window !== "undefined" && window !== null ? window.pinball : void 0) {
+      while (window.pinball.length) {
+        exports.push(window.pinball.shift());
+      }
+      window.pinball = exports;
+    }
+    return exports;
   });
 
 }).call(this);

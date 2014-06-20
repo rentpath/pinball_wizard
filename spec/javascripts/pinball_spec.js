@@ -352,6 +352,13 @@
         return expect(callback).not.toHaveBeenCalled();
       });
     });
+    describe('#push', function() {
+      return it('calls the function with the first entry and the args for the rest', function() {
+        spyOn(pinball, 'activate');
+        pinball.push(['activate', 'my-feature']);
+        return expect(pinball.activate).toHaveBeenCalledWith('my-feature');
+      });
+    });
     return jasmine.getEnv().execute();
   });
 

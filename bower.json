@@ -1,7 +1,7 @@
 {
   "name": "pinball",
   "version": "0.0.1",
-  "main": "pinball.js",
+  "main": "js/pinball/pinball.js",
   "dependencies": {
   },
   "devDependencies": {

@@ -270,5 +270,11 @@ require ['pinball'], (pinball) ->
         pinball.deactivate 'a'
         expect(callback).not.toHaveBeenCalled()
 
+  describe '#push', ->
+    it 'calls the function with the first entry and the args for the rest', ->
+      spyOn(pinball, 'activate')
+      pinball.push ['activate','my-feature']
+      expect(pinball.activate).toHaveBeenCalledWith('my-feature')
+
   # Jasmine 2.0 Works on window.onload and doesn't play well with requirejs
   jasmine.getEnv().execute()
