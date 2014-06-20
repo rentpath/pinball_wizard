@@ -26,7 +26,7 @@ An feature has several attributes:
 
 Define your feature in `app/features`.
 
-```
+```ruby
 # app/features/example.rb
 
 class ExampleFeature
@@ -41,7 +41,7 @@ Pinball::Registry.add(ExampleFeature)
 
 You can also pass in a block for situtations where availability is conditional.
 
-```
+```ruby
 # app/features/example.rb
 
 class ExampleFeature
@@ -95,7 +95,8 @@ Features subscribe to events and respond when they're activated or deactivated. 
 
 One advantage to this approach is that you can activate features after the DOM is loaded (for testing).
 
-When pinball runs, it will activate the features.
+When pinball runs, it will automatically activate the features.
+Deactivating is optional and may not be supported.
 
 
 ### Example AMD/RequireJS Module
@@ -115,8 +116,6 @@ define ['pinball'], (pinball) ->
 ```
 
 ### Example Flight Component
-
-*TODO*: Test the event ordering with this implementation.
 
 ```coffee
 define ['pinball'], (pinball) ->
