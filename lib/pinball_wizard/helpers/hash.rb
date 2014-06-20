@@ -1,7 +1,7 @@
-require 'pinball/helpers/hash'
+require 'pinball_wizard/helpers/hash'
 
 # Further Reading: https://practicingruby.com/articles/ruby-and-the-singleton-pattern-dont-get-along
-module Pinball
+module PinballWizard
   module Helpers
     module Hash
       module_function

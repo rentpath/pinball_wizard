@@ -2,7 +2,7 @@
 
 <img src="http://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Pinball_Flippers_-_Demolition_Man.JPG/1024px-Pinball_Flippers_-_Demolition_Man.JPG" width="100%">
 
-pinball brings feature flipping into a simple and uniform API.
+PinballWizard brings feature flipping into a simple and uniform API.
 
 ## What is a *feature*?
 
@@ -30,12 +30,12 @@ Define your feature in `app/features`.
 # app/features/example.rb
 
 class ExampleFeature
-  include Pinball::Feature
+  include PinballWizard::Feature
   available true
   active_by_default false
 end
 
-Pinball::Registry.add(ExampleFeature)
+PinballWizard::Registry.add(ExampleFeature)
 
 ```
 
@@ -45,7 +45,7 @@ You can also pass in a block for situtations where availability is conditional.
 # app/features/example.rb
 
 class ExampleFeature
-  include Pinball::Feature
+  include PinballWizard::Feature
 
   available do
     # conditionally return true/false
@@ -56,7 +56,7 @@ class ExampleFeature
   end
 end
 
-Pinball::Registry.add(ExampleFeature)
+PinballWizard::Registry.add(ExampleFeature)
 
 ```
 
@@ -78,7 +78,7 @@ If the feature is not active by default, it's recommended to hide the HTML with 
 
 ## CSS
 
-Pinball doesn't have any CSS specific helpers, but recommends a convention similar to the Ruby version:
+PinballWizard doesn't have any CSS specific helpers, but recommends a convention similar to the Ruby version:
 
 ```scss
 // public/scss/features/_example.scss
@@ -102,7 +102,7 @@ Deactivating is optional and may not be supported.
 ### Example AMD/RequireJS Module
 
 ```coffee
-define ['pinball'], (pinball) ->
+define ['pinball_wizard'], (pinball) ->
 
   # Define feature component functions here ...
 
@@ -118,7 +118,7 @@ define ['pinball'], (pinball) ->
 ### Example Flight Component
 
 ```coffee
-define ['pinball'], (pinball) ->
+define ['pinball_wizard'], (pinball) ->
 
   @after 'initialize', ->
     pinball.subscribe 'example',
@@ -134,7 +134,7 @@ define ['pinball'], (pinball) ->
 As an alternative, a feature may check if it's active. This method is not preferred since it only occurs once during page load.
 
 ```coffee
-define ['pinball'], (pinball) ->
+define ['pinball_wizard'], (pinball) ->
 
     if pinball.isActive('example')
         # Do something
@@ -158,7 +158,7 @@ pinball.deactivate('example');
 Activating a feature that is already active will have no effect.
 
 ## JsConfig
-The application keeps a list of features and passes them in the JsConfig object (e.g. `window.ApartmentGuide`). These define availability and what's active by default. AG is hooked up to Pinball to automatically be aware of these. No additional code is necessary.
+The application keeps a list of features and passes them in the JsConfig object (e.g. `window.ApartmentGuide`). These define availability and what's active by default. AG is hooked up to PinballWizard to automatically be aware of these. No additional code is necessary.
 
 * Array of hashes for each feature
     * Keys: `available`, `active`, and `activeByDefault`
@@ -176,8 +176,8 @@ pinball.state();
 ```
 
 ## Integrations
-* [Optimizely](https://github.com/primedia/pinball.js/wiki/Integrating-a-Feature-with-Optimizely)
-* [ConFusion](https://github.com/primedia/pinball.js/wiki/Integrating-a-Feature-with-ConFusion)
+* [Optimizely](https://github.com/primedia/pinball_wizard/wiki/Integrating-a-Feature-with-Optimizely)
+* [ConFusion](https://github.com/primedia/pinball_wizard/wiki/Integrating-a-Feature-with-ConFusion)
 
 ## Tests
 

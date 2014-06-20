@@ -1,8 +1,8 @@
 {
-  "name": "pinball.js",
+  "name": "pinball_wizard",
   "version": "0.0.1",
-  "description": "pinball.js",
-  "homepage": "https://github.com/primedia/pinball.js",
+  "description": "pinball_wizard",
+  "homepage": "https://github.com/primedia/pinball_wizard",
 
   "author": {
     "name": "RentPath"
@@ -11,10 +11,10 @@
   "repositories": [
     {
       "type": "git",
-      "url": "https://github.com/primedia/pinball.js.git"
+      "url": "https://github.com/primedia/pinball_wizard.git"
     }
   ],
 
-  "github": "https://github.com/primedia/pinball.js.git"
+  "github": "https://github.com/primedia/pinball_wizard.git"
 }
 

@@ -1,4 +1,4 @@
 requirejs.config({
   waitSeconds: 120,
-  baseUrl: "js/pinball"
+  baseUrl: "js/pinball_wizard"
 });

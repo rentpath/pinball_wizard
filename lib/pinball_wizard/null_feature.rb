@@ -1,4 +1,4 @@
-module Pinball
+module PinballWizard
   class NullFeature
     include Feature
 

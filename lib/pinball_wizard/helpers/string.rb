@@ -1,4 +1,4 @@
-module Pinball
+module PinballWizard
   module Helpers
     module String
       module_function

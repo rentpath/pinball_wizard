@@ -1,6 +1,6 @@
-require 'pinball/helpers/string'
+require 'pinball_wizard/helpers/string'
 
-module Pinball
+module PinballWizard
   module Feature
     module ClassMethods
 

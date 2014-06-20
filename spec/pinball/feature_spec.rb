@@ -1,12 +1,12 @@
-require 'pinball'
+require 'pinball_wizard'
 
-describe Pinball::Feature do
+describe PinballWizard::Feature do
 
   describe '.available?' do
     context 'without setting a value' do
       subject do
         Class.new do
-          include Pinball::Feature
+          include PinballWizard::Feature
         end
       end
 
@@ -18,7 +18,7 @@ describe Pinball::Feature do
     context 'with a boolean value' do
       subject do
         Class.new do
-          include Pinball::Feature
+          include PinballWizard::Feature
 
           available false
         end
@@ -32,7 +32,7 @@ describe Pinball::Feature do
     context 'with a block' do
       subject do
         Class.new do
-          include Pinball::Feature
+          include PinballWizard::Feature
 
           available do
             false
@@ -50,7 +50,7 @@ describe Pinball::Feature do
     context 'without setting a value' do
       subject do
         Class.new do
-          include Pinball::Feature
+          include PinballWizard::Feature
         end
       end
 
@@ -62,7 +62,7 @@ describe Pinball::Feature do
     context 'with a boolean value' do
       subject do
         Class.new do
-          include Pinball::Feature
+          include PinballWizard::Feature
 
           active_by_default true
         end
@@ -76,7 +76,7 @@ describe Pinball::Feature do
     context 'with a block' do
       subject do
         Class.new do
-          include Pinball::Feature
+          include PinballWizard::Feature
 
           active_by_default do
             true
@@ -94,7 +94,7 @@ describe Pinball::Feature do
      context 'with a long name' do
       subject do
         class MySuperDuperFeature
-          include Pinball::Feature
+          include PinballWizard::Feature
         end
         MySuperDuperFeature
       end
@@ -107,7 +107,7 @@ describe Pinball::Feature do
     context 'with "Feature" in the class name' do
       subject do
         class SuperFeature
-          include Pinball::Feature
+          include PinballWizard::Feature
         end
         SuperFeature
       end
@@ -121,7 +121,7 @@ describe Pinball::Feature do
     context 'using defaults' do
       subject do
         Class.new do
-          include Pinball::Feature
+          include PinballWizard::Feature
         end
       end
 
@@ -136,7 +136,7 @@ describe Pinball::Feature do
     context 'when using boolean values' do
       subject do
         Class.new do
-          include Pinball::Feature
+          include PinballWizard::Feature
 
           available false
 
@@ -155,7 +155,7 @@ describe Pinball::Feature do
     context 'when using blocks' do
       subject do
         Class.new do
-          include Pinball::Feature
+          include PinballWizard::Feature
 
           available do
             false

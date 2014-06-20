@@ -1,3 +1,3 @@
-module Pinball
+module PinballWizard
   VERSION = '0.0.1'
 end

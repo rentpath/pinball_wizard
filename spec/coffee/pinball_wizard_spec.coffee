@@ -1,4 +1,4 @@
-require ['pinball'], (pinball) ->
+require ['pinball_wizard'], (pinball) ->
 
   beforeEach ->
     pinball.debug()
