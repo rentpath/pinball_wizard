@@ -2,7 +2,10 @@
 
 <img src="http://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Pinball_Flippers_-_Demolition_Man.JPG/1024px-Pinball_Flippers_-_Demolition_Man.JPG" width="100%">
 
-PinballWizard brings feature flipping into a simple and uniform API.
+[PinballWizard](https://www.youtube.com/watch?v=DthtDjhqVOU) brings feature flipping into a simple and uniform API.
+
+[![The real pinball wizard](http://img.youtube.com/vi/DthtDjhqVOU/1.jpg)](https://www.youtube.com/watch?v=DthtDjhqVOU)
+[Pinball Wizard ft. Sir Elton John](https://www.youtube.com/watch?v=DthtDjhqVOU)
 
 ## What is a *feature*?
 
