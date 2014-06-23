@@ -22,8 +22,10 @@ module PinballWizard
       @collection = {}
     end
 
-    def to_json
+    def to_h
       Helpers::Hash.camelize_hash_keys(collection)
     end
+
+    alias_method :to_hash, :to_h
   end
 end

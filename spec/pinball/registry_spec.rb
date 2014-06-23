@@ -47,10 +47,10 @@ describe PinballWizard::Registry do
     end
   end
 
-  describe '.to_json' do
+  describe '.to_h' do
     it 'should build a hash' do
       PinballWizard::Registry.add(default_feature)
-      expect(PinballWizard::Registry.to_json).to eq({
+      expect(PinballWizard::Registry.to_h).to eq({
         'default' => { 'available' => true, 'activeByDefault' => false }
       })
     end
