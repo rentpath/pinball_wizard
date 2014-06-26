@@ -146,7 +146,7 @@ define ['pinball_wizard'], (pinball) ->
 ## Activating and Testing Features
 
 ### With a URL Param
-Append `?pinball_example` to the URL.
+Prefix the name of your example with `pinball_` and append it to the URL (e.g. `?pinball_example`).
 
 ### Post-Render (after page load)
 
