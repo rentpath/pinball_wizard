@@ -1,6 +1,6 @@
 module PinballWizard
-  module Rails
-    module Helper
+  module ViewHelpers
+    module Rails
       def feature(name, options = {})
         if PinballWizard::Registry.available?(name)
           partial_name = options.fetch(:partial) { name }
