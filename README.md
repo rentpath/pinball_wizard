@@ -14,12 +14,12 @@ A set of Ruby, HTML, JavaScript, and CSS that can be turned on or off.
 An feature has several attributes:
 
 * *Active*: If it is currently turned on and running.
-* *ActiveByDefault*: If it should activate without by itself.
+* *Activate Immediately*: If it should activate right away.
 * *Available*: If it can be activated. Defaults to `true`. Used primarily with other integrations.
 
 
 ## Building
-1. Define and register the feature in the [Ruby app](#ruby) and set `active_by_default` to `false`.
+1. Define and register the feature in the [Ruby app](#ruby) and set `activate_immediately` to `false`.
 2. Build the corresponding [HTML](#html) and [CSS](#css)
 3. Build the [JavaScript component](#javascript).
 4. Test by adding the name prefixed with `pinball_` to the URL param. e.g. `?pinball_example`.
@@ -35,7 +35,7 @@ Define your feature in `app/features`.
 class ExampleFeature
   include PinballWizard::Feature
   available true
-  active_by_default false
+  activate_immediately false
 end
 
 PinballWizard::Registry.add(ExampleFeature)
@@ -54,7 +54,7 @@ class ExampleFeature
     # conditionally return true/false
   end
 
-  active_by_default do
+  activate_immediately do
     # conditionally return true/false
   end
 end
@@ -73,7 +73,7 @@ Once the feature is registered, you can use slim to include the HTML partial fou
 
 To use a different partial for the same feature, pass in the `partial:` key. This will use `app/views/features/example_button.slim`.
 
-If the feature is not active by default, it's recommended to hide the HTML with inline or external CSS.
+If the feature is not activated immediately, it's recommended to hide the HTML with inline or external CSS.
 
 ```slim
 = feature 'example', partial: :example_button'
@@ -161,10 +161,10 @@ pinball.deactivate('example');
 Activating a feature that is already active will have no effect.
 
 ## JsConfig
-The application keeps a list of features and passes them in the JsConfig object (e.g. `window.ApartmentGuide`). These define availability and what's active by default. AG is hooked up to PinballWizard to automatically be aware of these. No additional code is necessary.
+The application keeps a list of features and passes them in the JsConfig object (e.g. `window.ApartmentGuide`). These define availability and what's activated immediately. AG is hooked up to PinballWizard to automatically be aware of these. No additional code is necessary.
 
 * Array of hashes for each feature
-    * Keys: `available`, `active`, and `activeByDefault`
+    * Keys: `available`, `active`, and `activateImmediately`
 
 ## Debugging
 

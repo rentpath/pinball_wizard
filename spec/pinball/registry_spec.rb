@@ -51,7 +51,7 @@ describe PinballWizard::Registry do
     it 'should build a hash' do
       PinballWizard::Registry.add(default_feature)
       expect(PinballWizard::Registry.to_h).to eq({
-        'default' => { 'available' => true, 'activeByDefault' => false }
+        'default' => { 'available' => true, 'activateImmediately' => false }
       })
     end
   end

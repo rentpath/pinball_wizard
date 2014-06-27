@@ -46,7 +46,7 @@ describe PinballWizard::Feature do
     end
   end
 
-  describe '.active_by_default?' do
+  describe '.activate_immediately?' do
     context 'without setting a value' do
       subject do
         Class.new do
@@ -54,8 +54,8 @@ describe PinballWizard::Feature do
         end
       end
 
-      it 'should be active by default' do
-        expect(subject).not_to be_active_by_default
+      it 'should be activated' do
+        expect(subject).not_to be_activate_immediately
       end
     end
 
@@ -64,12 +64,12 @@ describe PinballWizard::Feature do
         Class.new do
           include PinballWizard::Feature
 
-          active_by_default true
+          activate_immediately true
         end
       end
 
-      it 'should not be active by default' do
-        expect(subject).to be_active_by_default
+      it 'should not be activated' do
+        expect(subject).to be_activate_immediately
       end
     end
 
@@ -78,14 +78,14 @@ describe PinballWizard::Feature do
         Class.new do
           include PinballWizard::Feature
 
-          active_by_default do
+          activate_immediately do
             true
           end
         end
       end
 
-      it 'should not be active by default' do
-        expect(subject).to be_active_by_default
+      it 'should not be activated' do
+        expect(subject).to be_activate_immediately
       end
     end
   end
@@ -128,7 +128,7 @@ describe PinballWizard::Feature do
       it 'should build a hash' do
         expect(subject.to_h).to eq({
           available: true,
-          active_by_default: false
+          activate_immediately: false
         })
       end
     end
@@ -140,14 +140,14 @@ describe PinballWizard::Feature do
 
           available false
 
-          active_by_default true
+          activate_immediately true
         end
       end
 
       it 'should build a hash' do
         expect(subject.to_h).to eq({
           available: false,
-          active_by_default: true
+          activate_immediately: true
         })
       end
     end
@@ -161,7 +161,7 @@ describe PinballWizard::Feature do
             false
           end
 
-          active_by_default do
+          activate_immediately do
             true
           end
         end
@@ -170,7 +170,7 @@ describe PinballWizard::Feature do
       it 'should build a hash' do
         expect(subject.to_h).to eq({
           available: false,
-          active_by_default: true
+          activate_immediately: true
         })
       end
     end

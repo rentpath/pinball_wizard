@@ -12,12 +12,12 @@ module PinballWizard
         @available.call
       end
 
-      def active_by_default(value = false, &block)
-        @active_by_default = block.nil? ? proc { !!value } : block
+      def activate_immediately(value = false, &block)
+        @activate_immediately = block.nil? ? proc { !!value } : block
       end
 
-      def active_by_default?
-        @active_by_default.call
+      def activate_immediately?
+        @activate_immediately.call
       end
 
       def registry_name
@@ -26,8 +26,8 @@ module PinballWizard
 
       def to_h
         {
-          available:         available?,
-          active_by_default: active_by_default?
+          available:            available?,
+          activate_immediately: activate_immediately?
         }
       end
 
@@ -35,7 +35,7 @@ module PinballWizard
 
       def set_defaults
         available true
-        active_by_default false
+        activate_immediately false
       end
     end
 

@@ -52,14 +52,14 @@
       return window.location.search.indexOf("" + urlPrefix + name) !== -1;
     };
     _shouldActivate = function(feature) {
-      return feature.activeByDefault || _urlMatches(feature.name);
+      return feature.activateImmediately || _urlMatches(feature.name);
     };
     add = function(list) {
       var feature, name, _results;
       _results = [];
       for (name in list) {
         feature = list[name];
-        feature = _buildFeature(name, feature.available, feature.activeByDefault);
+        feature = _buildFeature(name, feature.available, feature.activateImmediately);
         features[name] = feature;
         _log("Added feature " + name + ". %O", feature);
         if (_shouldActivate(feature)) {
@@ -73,12 +73,12 @@
     get = function(name) {
       return features[name];
     };
-    _buildFeature = function(name, available, activeByDefault) {
+    _buildFeature = function(name, available, activateImmediately) {
       return {
         name: name,
         available: available != null ? available : true,
         active: false,
-        activeByDefault: activeByDefault != null ? activeByDefault : false
+        activateImmediately: activateImmediately != null ? activateImmediately : false
       };
     };
     activate = function(name) {

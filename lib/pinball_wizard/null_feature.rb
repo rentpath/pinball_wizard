@@ -3,6 +3,6 @@ module PinballWizard
     include Feature
 
     available false
-    active_by_default false
+    activate_immediately false
   end
 end

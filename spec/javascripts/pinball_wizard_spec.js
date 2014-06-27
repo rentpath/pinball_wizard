@@ -26,38 +26,38 @@
         });
         return expect(pinball.get('a').available).toEqual(true);
       });
-      it('is not activeByDefault', function() {
+      it('is not activateImmediately', function() {
         pinball.add({
           a: {}
         });
-        return expect(pinball.get('a').activeByDefault).toEqual(false);
+        return expect(pinball.get('a').activateImmediately).toEqual(false);
       });
-      it('honors available and activeByDefault attributes', function() {
+      it('honors available and activateImmediately attributes', function() {
         pinball.add({
           a: {
             available: true,
-            activeByDefault: true
+            activateImmediately: true
           }
         });
         return expect(pinball.get('a')).toEqual({
           name: 'a',
           available: true,
           active: true,
-          activeByDefault: true
+          activateImmediately: true
         });
       });
-      it('activates if activeByDefault', function() {
+      it('activates if activateImmediately', function() {
         pinball.add({
           a: {
-            activeByDefault: true
+            activateImmediately: true
           }
         });
         return expect(pinball.isActive('a')).toEqual(true);
       });
-      it('does not activate if activeByDefault is false', function() {
+      it('does not activate if activateImmediately is false', function() {
         pinball.add({
           a: {
-            activeByDefault: false
+            activateImmediately: false
           }
         });
         return expect(pinball.isActive('a')).toEqual(false);
@@ -95,7 +95,7 @@
       return it('displays a list based on state', function() {
         pinball.add({
           a: {
-            activeByDefault: true
+            activateImmediately: true
           },
           b: {},
           c: {
@@ -107,19 +107,19 @@
             name: 'a',
             available: true,
             active: true,
-            activeByDefault: true
+            activateImmediately: true
           },
           b: {
             name: 'b',
             available: true,
             active: false,
-            activeByDefault: false
+            activateImmediately: false
           },
           c: {
             name: 'c',
             available: false,
             active: false,
-            activeByDefault: false
+            activateImmediately: false
           }
         });
       });
@@ -129,7 +129,7 @@
         pinball.add({
           a: {
             available: true,
-            activeByDefault: true
+            activateImmediately: true
           }
         });
         pinball.activate('a');
@@ -137,14 +137,14 @@
           name: 'a',
           available: true,
           active: true,
-          activeByDefault: true
+          activateImmediately: true
         });
       });
       return it('does not make an unavailable feature active', function() {
         pinball.add({
           a: {
             available: false,
-            activeByDefault: false
+            activateImmediately: false
           }
         });
         pinball.activate('a');
@@ -152,7 +152,7 @@
           name: 'a',
           available: false,
           active: false,
-          activeByDefault: false
+          activateImmediately: false
         });
       });
     });
@@ -161,7 +161,7 @@
         pinball.add({
           a: {
             available: true,
-            activeByDefault: true
+            activateImmediately: true
           }
         });
         pinball.deactivate('a');
@@ -169,7 +169,7 @@
           name: 'a',
           available: true,
           active: false,
-          activeByDefault: true
+          activateImmediately: true
         });
       });
     });
@@ -189,7 +189,7 @@
           name: 'a',
           available: true,
           active: false,
-          activeByDefault: false
+          activateImmediately: false
         });
       });
     });
@@ -228,11 +228,11 @@
           pinball.activate('a');
           return expect(callback.calls.count()).toEqual(2);
         });
-        it('calls when subscribing then adding an activeByDefault feature', function() {
+        it('calls when subscribing then adding an activateImmediately feature', function() {
           pinball.subscribe('a', callback);
           pinball.add({
             a: {
-              activeByDefault: true
+              activateImmediately: true
             }
           });
           return expect(callback).toHaveBeenCalled();
@@ -248,7 +248,7 @@
         return it('calls when subscribing to an already active feature', function() {
           pinball.add({
             a: {
-              activeByDefault: true
+              activateImmediately: true
             }
           });
           pinball.subscribe('a', callback);
@@ -303,11 +303,11 @@
           pinball.deactivate('a');
           return expect(callback.calls.count()).toEqual(2);
         });
-        it('calls when subscribing, adding adding an activeByDefault then deactivating', function() {
+        it('calls when subscribing, adding adding an activateImmediately then deactivating', function() {
           pinball.subscribe('a', null, callback);
           pinball.add({
             a: {
-              activeByDefault: true
+              activateImmediately: true
             }
           });
           pinball.deactivate('a');
@@ -324,11 +324,11 @@
         });
       });
       describe('when the deactivate callback should not be called', function() {
-        return it('does not call when subscribing then adding an activeByDefault feature', function() {
+        return it('does not call when subscribing then adding an activateImmediately feature', function() {
           pinball.subscribe('a', null, callback);
           pinball.add({
             a: {
-              activeByDefault: true
+              activateImmediately: true
             }
           });
           return expect(callback).not.toHaveBeenCalled();

@@ -24,28 +24,28 @@ require ['pinball_wizard'], (pinball) ->
         a: {}
       expect(pinball.get('a').available).toEqual(true)
 
-    it 'is not activeByDefault', ->
+    it 'is not activateImmediately', ->
       pinball.add
         a: {}
-      expect(pinball.get('a').activeByDefault).toEqual(false)
+      expect(pinball.get('a').activateImmediately).toEqual(false)
 
-    it 'honors available and activeByDefault attributes', ->
+    it 'honors available and activateImmediately attributes', ->
       pinball.add
-        a: { available: true,  activeByDefault: true }
+        a: { available: true,  activateImmediately: true }
       expect(pinball.get('a')).toEqual
         name: 'a'
         available: true
         active: true
-        activeByDefault: true
+        activateImmediately: true
 
-    it 'activates if activeByDefault', ->
+    it 'activates if activateImmediately', ->
       pinball.add
-        a: { activeByDefault: true }
+        a: { activateImmediately: true }
       expect(pinball.isActive('a')).toEqual(true)
 
-    it 'does not activate if activeByDefault is false', ->
+    it 'does not activate if activateImmediately is false', ->
       pinball.add
-        a: { activeByDefault: false }
+        a: { activateImmediately: false }
       expect(pinball.isActive('a')).toEqual(false)
 
     describe 'with a url param', ->
@@ -76,52 +76,52 @@ require ['pinball_wizard'], (pinball) ->
   describe '#state', ->
     it 'displays a list based on state', ->
       pinball.add
-        a: { activeByDefault: true  }
+        a: { activateImmediately: true  }
         b: {}
         c: { available: false}
 
       expect(pinball.state()).toEqual({
-        a: { name: 'a', available: true,  active: true,  activeByDefault: true  }
-        b: { name: 'b', available: true,  active: false, activeByDefault: false }
-        c: { name: 'c', available: false, active: false, activeByDefault: false }
+        a: { name: 'a', available: true,  active: true,  activateImmediately: true  }
+        b: { name: 'b', available: true,  active: false, activateImmediately: false }
+        c: { name: 'c', available: false, active: false, activateImmediately: false }
       })
 
   describe '#activate', ->
 
     it 'makes an available feature active', ->
       pinball.add
-        a: { available: true, activeByDefault: true }
+        a: { available: true, activateImmediately: true }
       pinball.activate 'a'
 
       expect(pinball.get('a')).toEqual
         name: 'a'
         available: true
         active: true
-        activeByDefault: true
+        activateImmediately: true
 
     it 'does not make an unavailable feature active', ->
       pinball.add
-        a: { available: false, activeByDefault: false }
+        a: { available: false, activateImmediately: false }
       pinball.activate 'a'
 
       expect(pinball.get('a')).toEqual
         name: 'a'
         available: false
         active: false
-        activeByDefault: false
+        activateImmediately: false
 
   describe '#deactivate', ->
 
     it 'makes an active feature inactive', ->
       pinball.add
-        a: { available: true, activeByDefault: true  }
+        a: { available: true, activateImmediately: true  }
       pinball.deactivate 'a'
 
       expect(pinball.get('a')).toEqual
         name: 'a'
         available: true
         active: false
-        activeByDefault: true
+        activateImmediately: true
 
   describe '#isActive', ->
 
@@ -140,7 +140,7 @@ require ['pinball_wizard'], (pinball) ->
         name: 'a'
         available: true
         active: false
-        activeByDefault: false
+        activateImmediately: false
 
   describe '#subscribe', ->
 
@@ -174,10 +174,10 @@ require ['pinball_wizard'], (pinball) ->
         pinball.activate 'a'
         expect(callback.calls.count()).toEqual(2)
 
-      it 'calls when subscribing then adding an activeByDefault feature', ->
+      it 'calls when subscribing then adding an activateImmediately feature', ->
         pinball.subscribe 'a', callback
         pinball.add
-          a: { activeByDefault: true }
+          a: { activateImmediately: true }
         expect(callback).toHaveBeenCalled()
 
       it 'calls when subscribing then adding and then activating a feature', ->
@@ -189,7 +189,7 @@ require ['pinball_wizard'], (pinball) ->
 
       it 'calls when subscribing to an already active feature', ->
         pinball.add
-          a: { activeByDefault: true }
+          a: { activateImmediately: true }
         pinball.subscribe 'a', callback
         expect(callback).toHaveBeenCalled()
 
@@ -234,10 +234,10 @@ require ['pinball_wizard'], (pinball) ->
         pinball.deactivate 'a'
         expect(callback.calls.count()).toEqual(2)
 
-      it 'calls when subscribing, adding adding an activeByDefault then deactivating', ->
+      it 'calls when subscribing, adding adding an activateImmediately then deactivating', ->
         pinball.subscribe 'a', null, callback
         pinball.add
-          a: { activeByDefault: true }
+          a: { activateImmediately: true }
         pinball.deactivate 'a'
         expect(callback).toHaveBeenCalled()
 
@@ -250,10 +250,10 @@ require ['pinball_wizard'], (pinball) ->
         expect(callback).toHaveBeenCalled()
 
     describe 'when the deactivate callback should not be called', ->
-       it 'does not call when subscribing then adding an activeByDefault feature', ->
+       it 'does not call when subscribing then adding an activateImmediately feature', ->
         pinball.subscribe 'a', null, callback
         pinball.add
-          a: { activeByDefault: true }
+          a: { activateImmediately: true }
         expect(callback).not.toHaveBeenCalled()
 
       it 'does not call when the feature is missing', ->
