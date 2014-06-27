@@ -2,13 +2,9 @@ require 'pinball_wizard'
 
 describe PinballWizard::Feature do
 
-  describe '.available?' do
+  describe '#available?' do
     context 'without setting a value' do
-      subject do
-        Class.new do
-          include PinballWizard::Feature
-        end
-      end
+      subject { PinballWizard::Feature.new }
 
       it 'should be available' do
         expect(subject).to be_available
@@ -17,11 +13,7 @@ describe PinballWizard::Feature do
 
     context 'with a boolean value' do
       subject do
-        Class.new do
-          include PinballWizard::Feature
-
-          available false
-        end
+        PinballWizard::Feature.new available: false
       end
 
       it 'should not be available' do
@@ -29,15 +21,9 @@ describe PinballWizard::Feature do
       end
     end
 
-    context 'with a block' do
+    context 'with a proc' do
       subject do
-        Class.new do
-          include PinballWizard::Feature
-
-          available do
-            false
-          end
-        end
+        PinballWizard::Feature.new available: proc { false }
       end
 
       it 'should not be available' do
@@ -46,13 +32,9 @@ describe PinballWizard::Feature do
     end
   end
 
-  describe '.activate_immediately?' do
+  describe '#activate_immediately?' do
     context 'without setting a value' do
-      subject do
-        Class.new do
-          include PinballWizard::Feature
-        end
-      end
+      subject { PinballWizard::Feature.new }
 
       it 'should be activated' do
         expect(subject).not_to be_activate_immediately
@@ -61,11 +43,7 @@ describe PinballWizard::Feature do
 
     context 'with a boolean value' do
       subject do
-        Class.new do
-          include PinballWizard::Feature
-
-          activate_immediately true
-        end
+        PinballWizard::Feature.new activate_immediately: true
       end
 
       it 'should not be activated' do
@@ -73,15 +51,9 @@ describe PinballWizard::Feature do
       end
     end
 
-    context 'with a block' do
+    context 'with a proc' do
       subject do
-        Class.new do
-          include PinballWizard::Feature
-
-          activate_immediately do
-            true
-          end
-        end
+        PinballWizard::Feature.new activate_immediately: proc { true }
       end
 
       it 'should not be activated' do
@@ -90,40 +62,21 @@ describe PinballWizard::Feature do
     end
   end
 
-  describe '.registry_name' do
+  describe '#name' do
      context 'with a long name' do
       subject do
-        class MySuperDuperFeature
-          include PinballWizard::Feature
-        end
-        MySuperDuperFeature
+        PinballWizard::Feature.new name: 'my_super_duper'
       end
 
       it 'should underscore the name' do
-        expect(subject.registry_name).to eq('my_super_duper')
-      end
-    end
-
-    context 'with "Feature" in the class name' do
-      subject do
-        class SuperFeature
-          include PinballWizard::Feature
-        end
-        SuperFeature
-      end
-
-      it 'should not repeat feature' do
-        expect(subject.registry_name).to eq('super')
+        expect(subject.name).to eq('my_super_duper')
       end
     end
   end
-  describe '.to_h' do
+
+  describe '#to_h' do
     context 'using defaults' do
-      subject do
-        Class.new do
-          include PinballWizard::Feature
-        end
-      end
+      subject { PinballWizard::Feature.new }
 
       it 'should build a hash' do
         expect(subject.to_h).to eq({
@@ -135,13 +88,7 @@ describe PinballWizard::Feature do
 
     context 'when using boolean values' do
       subject do
-        Class.new do
-          include PinballWizard::Feature
-
-          available false
-
-          activate_immediately true
-        end
+        PinballWizard::Feature.new available: false, activate_immediately: true
       end
 
       it 'should build a hash' do
@@ -152,19 +99,12 @@ describe PinballWizard::Feature do
       end
     end
 
-    context 'when using blocks' do
+    context 'when using procs' do
       subject do
-        Class.new do
-          include PinballWizard::Feature
-
-          available do
-            false
-          end
-
-          activate_immediately do
-            true
-          end
-        end
+        PinballWizard::Feature.new({
+          available:            proc { false },
+          activate_immediately: proc { true }
+        })
       end
 
       it 'should build a hash' do

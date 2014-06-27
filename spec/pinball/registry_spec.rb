@@ -7,26 +7,18 @@ describe PinballWizard::Registry do
   end
 
   let(:default_feature) do
-    class DefaultFeature
-      include PinballWizard::Feature
-    end
-    DefaultFeature
+    PinballWizard::Feature.new name: 'default'
   end
 
-
   let(:not_available_feature) do
-    class NotAvailableFeature
-      include PinballWizard::Feature
-      available false
-    end
-    NotAvailableFeature
+    PinballWizard::Feature.new name: 'not_available', available: false
   end
 
   describe '.add' do
     it 'should add to the registry with defaults' do
       PinballWizard::Registry.add(default_feature)
       expect(PinballWizard::Registry.collection).to eq({
-        'default' => DefaultFeature
+        'default' => default_feature
       })
     end
   end

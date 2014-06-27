@@ -1,4 +1,4 @@
-require 'pinball_wizard/helpers/hash'
+require 'pinball_wizard/helpers/string'
 
 # Further Reading: https://practicingruby.com/articles/ruby-and-the-singleton-pattern-dont-get-along
 module PinballWizard

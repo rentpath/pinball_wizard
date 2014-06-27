@@ -6,11 +6,11 @@ module PinballWizard
     extend self
 
     def add(feature)
-      collection[feature.registry_name] = feature
+      collection[feature.name] = feature
     end
 
     def available?(name)
-      feature = collection.fetch(name, NullFeature)
+      feature = collection.fetch(name) { null_feature }
       feature.available?
     end
 
@@ -27,5 +27,11 @@ module PinballWizard
     end
 
     alias_method :to_hash, :to_h
+
+    private
+
+    def null_feature
+      Feature.new available: false
+    end
   end
 end
