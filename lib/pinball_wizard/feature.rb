@@ -1,19 +1,23 @@
+require 'pinball_wizard/helpers/hash'
+
 module PinballWizard
   class Feature
-    attr_reader :name, :activate_immediately, :available
+    attr_reader :name, :activate_immediately, :available, :options
 
-    def initialize(options = {})
-      @name                 = options.fetch(:name) { 'no_name' }
+    def initialize(name, *options)
+      @name                 = name
+      options               = Helpers::Hash.normalize_options(options)
       @activate_immediately = ensure_callable(options.fetch(:activate_immediately, false))
       @available            = ensure_callable(options.fetch(:available, true))
+      @options              = Helpers::Hash.without(options, :name, :activate_immediately, :available)
     end
 
     def available?
-      @available.call
+      available.call
     end
 
     def activate_immediately?
-      @activate_immediately.call
+      activate_immediately.call
     end
 
     def to_h

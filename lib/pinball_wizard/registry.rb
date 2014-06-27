@@ -6,11 +6,11 @@ module PinballWizard
     extend self
 
     def add(feature)
-      collection[feature.name] = feature
+      collection[feature.name.to_s] = feature
     end
 
     def available?(name)
-      feature = collection.fetch(name) { null_feature }
+      feature = collection.fetch(name.to_s) { null_feature }
       feature.available?
     end
 
@@ -31,7 +31,7 @@ module PinballWizard
     private
 
     def null_feature
-      Feature.new available: false
+      Feature.new 'null_feature', available: false
     end
   end
 end

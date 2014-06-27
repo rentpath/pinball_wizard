@@ -7,11 +7,11 @@ describe PinballWizard::Registry do
   end
 
   let(:default_feature) do
-    PinballWizard::Feature.new name: 'default'
+    PinballWizard::Feature.new 'default'
   end
 
   let(:not_available_feature) do
-    PinballWizard::Feature.new name: 'not_available', available: false
+    PinballWizard::Feature.new 'not_available', available: false
   end
 
   describe '.add' do

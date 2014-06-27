@@ -22,6 +22,24 @@ module PinballWizard
         end
         ::Hash[camelized]
       end
+
+      # Convert [:a, :b, { c: 'd' }] => { a: true, b: true, c: 'd' }
+      def normalize_options(options)
+        options.each_with_object({}) do |opt, memo|
+          if opt.is_a?(::Hash)
+            memo.merge!(opt)
+          else
+            memo[opt] = true
+          end
+        end
+      end
+
+      def without(hash, *keys)
+        keys.each do |key|
+          hash.delete(key)
+        end
+        hash
+      end
     end
   end
 end
