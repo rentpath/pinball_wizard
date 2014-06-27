@@ -179,6 +179,8 @@ pinball.state();
 ```
 
 ## Integrations
+* [Rails](https://github.com/primedia/pinball_wizard/wiki/Integrating-with-Rails)
+* [Sinatra with Slim](https://github.com/primedia/pinball_wizard/wiki/Integrating-with-Sinatra)
 * [Optimizely](https://github.com/primedia/pinball_wizard/wiki/Integrating-a-Feature-with-Optimizely)
 * [ConFusion](https://github.com/primedia/pinball_wizard/wiki/Integrating-a-Feature-with-ConFusion)
 
