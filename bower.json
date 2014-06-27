@@ -1,6 +1,6 @@
 {
   "name": "pinball_wizard",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "main": "js/pinball_wizard/pinball_wizard.js",
   "dependencies": {
   },
