@@ -31,11 +31,11 @@ define ->
     window.location.search.indexOf("#{urlPrefix}#{name}") != -1
 
   _shouldActivate = (feature) ->
-    feature.activateImmediately or _urlMatches(feature.name)
+    feature.active or _urlMatches(feature.name)
 
   add = (list) ->
     for name, feature of list
-      feature = _buildFeature(name, feature.available, feature.activateImmediately)
+      feature = _buildFeature(name, feature.active, feature.available)
       features[name] = feature
       _log "Added feature #{name}. %O", feature
 
@@ -46,11 +46,10 @@ define ->
   get = (name) ->
     features[name]
 
-  _buildFeature = (name, available, activateImmediately) ->
+  _buildFeature = (name, active, available) ->
     name:                name
+    active:              if active?    then active    else false
     available:           if available? then available else true
-    active:              false
-    activateImmediately: if activateImmediately? then activateImmediately else false
 
   # TODO: Move to null object pattern
   activate = (name) ->

@@ -26,38 +26,30 @@
         });
         return expect(pinball.get('a').available).toEqual(true);
       });
-      it('is not activateImmediately', function() {
-        pinball.add({
-          a: {}
-        });
-        return expect(pinball.get('a').activateImmediately).toEqual(false);
-      });
-      it('honors available and activateImmediately attributes', function() {
+      it('honors available', function() {
         pinball.add({
           a: {
-            available: true,
-            activateImmediately: true
+            available: true
           }
         });
         return expect(pinball.get('a')).toEqual({
           name: 'a',
           available: true,
-          active: true,
-          activateImmediately: true
+          active: false
         });
       });
-      it('activates if activateImmediately', function() {
+      it('activates if active', function() {
         pinball.add({
           a: {
-            activateImmediately: true
+            active: true
           }
         });
         return expect(pinball.isActive('a')).toEqual(true);
       });
-      it('does not activate if activateImmediately is false', function() {
+      it('does not activate if active is false', function() {
         pinball.add({
           a: {
-            activateImmediately: false
+            active: false
           }
         });
         return expect(pinball.isActive('a')).toEqual(false);
@@ -95,10 +87,9 @@
       return it('displays a list based on state', function() {
         pinball.add({
           a: {
-            activateImmediately: true
+            active: true
           },
-          b: {},
-          c: {
+          b: {
             available: false
           }
         });
@@ -106,20 +97,12 @@
           a: {
             name: 'a',
             available: true,
-            active: true,
-            activateImmediately: true
+            active: true
           },
           b: {
             name: 'b',
-            available: true,
-            active: false,
-            activateImmediately: false
-          },
-          c: {
-            name: 'c',
             available: false,
-            active: false,
-            activateImmediately: false
+            active: false
           }
         });
       });
@@ -128,31 +111,27 @@
       it('makes an available feature active', function() {
         pinball.add({
           a: {
-            available: true,
-            activateImmediately: true
+            available: true
           }
         });
         pinball.activate('a');
         return expect(pinball.get('a')).toEqual({
           name: 'a',
           available: true,
-          active: true,
-          activateImmediately: true
+          active: true
         });
       });
       return it('does not make an unavailable feature active', function() {
         pinball.add({
           a: {
-            available: false,
-            activateImmediately: false
+            available: false
           }
         });
         pinball.activate('a');
         return expect(pinball.get('a')).toEqual({
           name: 'a',
           available: false,
-          active: false,
-          activateImmediately: false
+          active: false
         });
       });
     });
@@ -160,16 +139,14 @@
       return it('makes an active feature inactive', function() {
         pinball.add({
           a: {
-            available: true,
-            activateImmediately: true
+            available: true
           }
         });
         pinball.deactivate('a');
         return expect(pinball.get('a')).toEqual({
           name: 'a',
           available: true,
-          active: false,
-          activateImmediately: true
+          active: false
         });
       });
     });
@@ -188,8 +165,7 @@
         return expect(pinball.get('a')).toEqual({
           name: 'a',
           available: true,
-          active: false,
-          activateImmediately: false
+          active: false
         });
       });
     });
@@ -228,15 +204,6 @@
           pinball.activate('a');
           return expect(callback.calls.count()).toEqual(2);
         });
-        it('calls when subscribing then adding an activateImmediately feature', function() {
-          pinball.subscribe('a', callback);
-          pinball.add({
-            a: {
-              activateImmediately: true
-            }
-          });
-          return expect(callback).toHaveBeenCalled();
-        });
         it('calls when subscribing then adding and then activating a feature', function() {
           pinball.subscribe('a', callback);
           pinball.add({
@@ -248,7 +215,7 @@
         return it('calls when subscribing to an already active feature', function() {
           pinball.add({
             a: {
-              activateImmediately: true
+              active: true
             }
           });
           pinball.subscribe('a', callback);
@@ -303,11 +270,11 @@
           pinball.deactivate('a');
           return expect(callback.calls.count()).toEqual(2);
         });
-        it('calls when subscribing, adding adding an activateImmediately then deactivating', function() {
+        it('calls when subscribing, adding adding an active then deactivating', function() {
           pinball.subscribe('a', null, callback);
           pinball.add({
             a: {
-              activateImmediately: true
+              active: true
             }
           });
           pinball.deactivate('a');
@@ -324,11 +291,11 @@
         });
       });
       describe('when the deactivate callback should not be called', function() {
-        return it('does not call when subscribing then adding an activateImmediately feature', function() {
+        return it('does not call when subscribing then adding an active feature', function() {
           pinball.subscribe('a', null, callback);
           pinball.add({
             a: {
-              activateImmediately: true
+              active: true
             }
           });
           return expect(callback).not.toHaveBeenCalled();
@@ -363,3 +330,5 @@
   });
 
 }).call(this);
+
+//# sourceMappingURL=pinball_wizard_spec.map

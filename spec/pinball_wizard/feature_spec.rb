@@ -32,32 +32,32 @@ describe PinballWizard::Feature do
     end
   end
 
-  describe '#activate_immediately?' do
+  describe '#active?' do
     context 'without setting a value' do
       subject { PinballWizard::Feature.new 'example' }
 
-      it 'should be activated' do
-        expect(subject).not_to be_activate_immediately
+      it 'should not be active' do
+        expect(subject).not_to be_active
       end
     end
 
     context 'with a boolean value' do
       subject do
-        PinballWizard::Feature.new 'example', activate_immediately: true
+        PinballWizard::Feature.new 'example', active: true
       end
 
       it 'should not be activated' do
-        expect(subject).to be_activate_immediately
+        expect(subject).to be_active
       end
     end
 
     context 'with a proc' do
       subject do
-        PinballWizard::Feature.new 'example', activate_immediately: proc { true }
+        PinballWizard::Feature.new 'example', active: proc { true }
       end
 
       it 'should not be activated' do
-        expect(subject).to be_activate_immediately
+        expect(subject).to be_active
       end
     end
   end
@@ -80,21 +80,21 @@ describe PinballWizard::Feature do
 
       it 'should build a hash' do
         expect(subject.to_h).to eq({
-          available: true,
-          activate_immediately: false
+          active:    false,
+          available: true
         })
       end
     end
 
     context 'when using boolean values' do
       subject do
-        PinballWizard::Feature.new 'example', available: false, activate_immediately: true
+        PinballWizard::Feature.new 'example', active: true, available: false
       end
 
       it 'should build a hash' do
         expect(subject.to_h).to eq({
-          available: false,
-          activate_immediately: true
+          active:    true,
+          available: false
         })
       end
     end
@@ -102,15 +102,15 @@ describe PinballWizard::Feature do
     context 'when using procs' do
       subject do
         PinballWizard::Feature.new('example', {
-          available:            proc { false },
-          activate_immediately: proc { true }
+          active:    proc { true },
+          available: proc { false }
         })
       end
 
       it 'should build a hash' do
         expect(subject.to_h).to eq({
-          available: false,
-          activate_immediately: true
+          active:    true,
+          available: false
         })
       end
     end

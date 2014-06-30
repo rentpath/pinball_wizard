@@ -52,14 +52,14 @@
       return window.location.search.indexOf("" + urlPrefix + name) !== -1;
     };
     _shouldActivate = function(feature) {
-      return feature.activateImmediately || _urlMatches(feature.name);
+      return feature.active || _urlMatches(feature.name);
     };
     add = function(list) {
       var feature, name, _results;
       _results = [];
       for (name in list) {
         feature = list[name];
-        feature = _buildFeature(name, feature.available, feature.activateImmediately);
+        feature = _buildFeature(name, feature.active, feature.available);
         features[name] = feature;
         _log("Added feature " + name + ". %O", feature);
         if (_shouldActivate(feature)) {
@@ -73,12 +73,11 @@
     get = function(name) {
       return features[name];
     };
-    _buildFeature = function(name, available, activateImmediately) {
+    _buildFeature = function(name, active, available) {
       return {
         name: name,
-        available: available != null ? available : true,
-        active: false,
-        activateImmediately: activateImmediately != null ? activateImmediately : false
+        active: active != null ? active : false,
+        available: available != null ? available : true
       };
     };
     activate = function(name) {
@@ -169,3 +168,5 @@
   });
 
 }).call(this);
+
+//# sourceMappingURL=pinball_wizard.map
