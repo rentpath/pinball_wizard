@@ -1,4 +1,4 @@
-# Feature Flipping FTW
+# Client and Server Feature Flipping
 
 <img src="http://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Pinball_Flippers_-_Demolition_Man.JPG/1024px-Pinball_Flippers_-_Demolition_Man.JPG" width="100%">
 
@@ -18,7 +18,7 @@ An feature has several attributes:
 
 
 ## Building
-1. Define and register the feature in the [Ruby app](#ruby) and set `activate` to `false`.
+1. Define and register the feature in the [Ruby app](#ruby) and set `active` to `false`.
 2. Build the corresponding [HTML](#html) and [CSS](#css)
 3. Build the [JavaScript component](#javascript).
 4. Test by adding the name prefixed with `pinball_` to the URL param. e.g. `?pinball_example`.

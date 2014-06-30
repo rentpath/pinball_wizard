@@ -9,6 +9,10 @@ module PinballWizard
       collection[feature.name.to_s] = feature
     end
 
+    def get(name)
+      collection[name.to_s]
+    end
+
     def available?(name)
       feature = collection.fetch(name.to_s) { null_feature }
       feature.available?
