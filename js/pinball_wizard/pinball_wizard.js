@@ -2,7 +2,7 @@
 (function() {
   'use strict';
   define(function() {
-    var activate, add, deactivate, debug, exports, features, get, isActive, push, reset, showLog, state, subscribe, subscribers, urlPrefix, _buildFeature, _buildSubscriber, _log, _notifySubscriberOnActivate, _notifySubscribersOnActivate, _notifySubscribersOnDeactivate, _shouldActivate, _urlMatches;
+    var activate, add, deactivate, debug, exports, features, get, isActive, push, reset, showLog, state, subscribe, subscribers, urlPrefix, _buildSubscriber, _log, _notifySubscriberOnActivate, _notifySubscribersOnActivate, _notifySubscribersOnDeactivate, _shouldActivate, _urlMatches;
     features = {};
     subscribers = {};
     urlPrefix = 'pinball_';
@@ -51,19 +51,18 @@
     _urlMatches = function(name) {
       return window.location.search.indexOf("" + urlPrefix + name) !== -1;
     };
-    _shouldActivate = function(feature) {
-      return feature.active || _urlMatches(feature.name);
+    _shouldActivate = function(name) {
+      return isActive(name) || _urlMatches(name);
     };
     add = function(list) {
-      var feature, name, _results;
+      var name, state, _results;
       _results = [];
       for (name in list) {
-        feature = list[name];
-        feature = _buildFeature(name, feature.active, feature.available);
-        features[name] = feature;
-        _log("Added feature " + name + ". %O", feature);
-        if (_shouldActivate(feature)) {
-          _results.push(activate(feature.name));
+        state = list[name];
+        features[name] = state;
+        _log("Added feature " + name + ": " + state);
+        if (_shouldActivate(name)) {
+          _results.push(activate(name));
         } else {
           _results.push(void 0);
         }
@@ -72,13 +71,6 @@
     };
     get = function(name) {
       return features[name];
-    };
-    _buildFeature = function(name, active, available) {
-      return {
-        name: name,
-        active: active != null ? active : false,
-        available: available != null ? available : true
-      };
     };
     activate = function(name) {
       var feature;
@@ -111,8 +103,7 @@
       }
     };
     isActive = function(name) {
-      var _ref;
-      return (_ref = get(name)) != null ? _ref.active : void 0;
+      return get(name) === 'active';
     };
     _buildSubscriber = function(onActivate, onDeactivate) {
       return {

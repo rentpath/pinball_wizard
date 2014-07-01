@@ -13,33 +13,25 @@ require ['pinball_wizard'], (pinball) ->
 
     it 'removes all features', ->
       pinball.add
-        a: {}
+        a: 'active'
       pinball.reset()
       expect(pinball.state()).toEqual({})
 
   describe '#add', ->
 
-    it 'is available by default', ->
-      pinball.add
-        a: {}
-      expect(pinball.get('a').available).toEqual(true)
-
-    it 'honors available', ->
-      pinball.add
-        a: { available: true }
-      expect(pinball.get('a')).toEqual
-        name: 'a'
-        available: true
-        active: false
-
     it 'activates if active', ->
       pinball.add
-        a: { active: true }
+        a: 'active'
       expect(pinball.isActive('a')).toEqual(true)
 
-    it 'does not activate if active is false', ->
+    it 'does not activate if inactive', ->
       pinball.add
-        a: { active: false }
+        a: 'inactive'
+      expect(pinball.isActive('a')).toEqual(false)
+
+    it 'does not activate if disabled', ->
+      pinball.add
+        a: 'disabled: reason'
       expect(pinball.isActive('a')).toEqual(false)
 
     describe 'with a url param', ->
@@ -52,83 +44,68 @@ require ['pinball_wizard'], (pinball) ->
       afterEach ->
         window.history.replaceState(null, null, originalPathname)
 
-      it 'is not activate when mismatched', ->
+      it 'is not active when mismatched', ->
         urlParam = '?pinball_foo'
         window.history.replaceState(null, null, window.location.pathname + urlParam)
         pinball.add
-          a: {}
+          a: 'inactive'
         expect(pinball.isActive('a')).toEqual(false)
 
-      it 'is activate with a missing url param', ->
+      it 'is active with a matching url param', ->
         urlParam = '?pinball_a'
         # Mock a different url
         window.history.replaceState(null, null, window.location.pathname + urlParam)
         pinball.add
-          a: {}
+          a: 'inactive'
         expect(pinball.isActive('a')).toEqual(true)
 
   describe '#state', ->
     it 'displays a list based on state', ->
       pinball.add
-        a: { active: true }
-        b: { available: false}
+        a: 'active'
+        b: 'inactive'
+        c: 'disabled: reason'
 
       expect(pinball.state()).toEqual({
-        a: { name: 'a', available: true,  active: true  }
-        b: { name: 'b', available: false, active: false }
+        a: 'active'
+        b: 'inactive'
+        c: 'disabled: reason'
       })
 
   describe '#activate', ->
 
-    it 'makes an available feature active', ->
+    it 'makes an inactive feature active', ->
       pinball.add
-        a: { available: true }
+        a: 'inactive'
       pinball.activate 'a'
 
-      expect(pinball.get('a')).toEqual
-        name: 'a'
-        available: true
-        active: true
+      expect(pinball.get('a')).toEqual('inactive')
 
-    it 'does not make an unavailable feature active', ->
+    it 'does not make a disabled feature active', ->
       pinball.add
-        a: { available: false }
+        a: 'disabled'
       pinball.activate 'a'
 
-      expect(pinball.get('a')).toEqual
-        name: 'a'
-        available: false
-        active: false
+      expect(pinball.get('a')).toEqual('disabled')
 
   describe '#deactivate', ->
 
     it 'makes an active feature inactive', ->
       pinball.add
-        a: { available: true  }
+        a: 'active'
       pinball.deactivate 'a'
 
-      expect(pinball.get('a')).toEqual
-        name: 'a'
-        available: true
-        active: false
+      expect(pinball.get('a')).toEqual('inactive')
 
   describe '#isActive', ->
 
     beforeEach ->
       pinball.add
-        a: {}
+        a: 'inactive'
 
     it 'is true after activating', ->
       pinball.activate 'a'
       expect(pinball.isActive('a')).toEqual(true)
-
-    it 'is false if not activated', ->
-      expect(pinball.isActive('a')).toEqual(false)
-
-      expect(pinball.get('a')).toEqual
-        name: 'a'
-        available: true
-        active: false
 
   describe '#subscribe', ->
 
@@ -139,14 +116,14 @@ require ['pinball_wizard'], (pinball) ->
     describe 'when the activate callback should be called', ->
       it 'calls after activating', ->
         pinball.add
-          a: {}
+          a: 'inactive'
         pinball.subscribe 'a', callback
         pinball.activate 'a'
         expect(callback).toHaveBeenCalled()
 
       it 'calls it once on multiple activations', ->
         pinball.add
-          a: {}
+          a: 'inactive'
         pinball.subscribe 'a', callback
         pinball.activate 'a'
         pinball.activate 'a'
@@ -155,7 +132,7 @@ require ['pinball_wizard'], (pinball) ->
 
       it 'calls it twice when toggling activations', ->
         pinball.add
-          a: {}
+          a: 'inactive'
         pinball.subscribe 'a', callback
         pinball.activate 'a'
         pinball.deactivate 'a'
@@ -165,13 +142,13 @@ require ['pinball_wizard'], (pinball) ->
       it 'calls when subscribing then adding and then activating a feature', ->
         pinball.subscribe 'a', callback
         pinball.add
-          a: {}
+          a: 'inactive'
         pinball.activate 'a'
         expect(callback).toHaveBeenCalled()
 
       it 'calls when subscribing to an already active feature', ->
         pinball.add
-          a: { active: true }
+          a: 'active'
         pinball.subscribe 'a', callback
         expect(callback).toHaveBeenCalled()
 
@@ -181,9 +158,9 @@ require ['pinball_wizard'], (pinball) ->
         pinball.activate 'a'
         expect(callback).not.toHaveBeenCalled()
 
-      it 'does not call when the feature is not available', ->
+      it 'does not call when the feature is disabled', ->
         pinball.add
-          a: { available: false }
+          a: 'disabled: reason'
         pinball.subscribe 'a', callback
         pinball.activate 'a'
         expect(callback).not.toHaveBeenCalled()
@@ -191,7 +168,7 @@ require ['pinball_wizard'], (pinball) ->
     describe 'when the deactivate callback should be called', ->
       it 'calls after deactivate', ->
         pinball.add
-          a: {}
+          a: 'inactive'
         pinball.subscribe 'a', null, callback
         pinball.activate 'a'
         pinball.deactivate 'a'
@@ -199,7 +176,7 @@ require ['pinball_wizard'], (pinball) ->
 
       it 'calls it once on multiple deactivations', ->
         pinball.add
-          a: {}
+          a: 'inactive'
         pinball.subscribe 'a', null, callback
         pinball.activate 'a'
         pinball.deactivate 'a'
@@ -208,7 +185,7 @@ require ['pinball_wizard'], (pinball) ->
 
       it 'calls it twice when toggling deactivations', ->
         pinball.add
-          a: {}
+          a: 'inactive'
         pinball.subscribe 'a', null, callback
         pinball.activate 'a'
         pinball.deactivate 'a'
@@ -219,14 +196,14 @@ require ['pinball_wizard'], (pinball) ->
       it 'calls when subscribing, adding adding an active then deactivating', ->
         pinball.subscribe 'a', null, callback
         pinball.add
-          a: { active: true }
+          a: 'active'
         pinball.deactivate 'a'
         expect(callback).toHaveBeenCalled()
 
       it 'calls when subscribing then adding and then deactivating a feature', ->
         pinball.subscribe 'a', null, callback
         pinball.add
-          a: {}
+          a: 'inactive'
         pinball.activate 'a'
         pinball.deactivate 'a'
         expect(callback).toHaveBeenCalled()
@@ -235,7 +212,7 @@ require ['pinball_wizard'], (pinball) ->
        it 'does not call when subscribing then adding an active feature', ->
         pinball.subscribe 'a', null, callback
         pinball.add
-          a: { active: true }
+          a: 'active'
         expect(callback).not.toHaveBeenCalled()
 
       it 'does not call when the feature is missing', ->
@@ -244,9 +221,9 @@ require ['pinball_wizard'], (pinball) ->
         pinball.deactivate 'a'
         expect(callback).not.toHaveBeenCalled()
 
-      it 'does not call when the feature is not available', ->
+      it 'does not call when the feature is disabled', ->
         pinball.add
-          a: { available: false }
+          a: 'disabled'
         pinball.subscribe 'a', null, callback
         pinball.activate 'a'
         pinball.deactivate 'a'

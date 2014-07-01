@@ -30,26 +30,19 @@ define ->
   _urlMatches = (name) ->
     window.location.search.indexOf("#{urlPrefix}#{name}") != -1
 
-  _shouldActivate = (feature) ->
-    feature.active or _urlMatches(feature.name)
+  _shouldActivate = (name) ->
+    isActive(name) or _urlMatches(name)
 
   add = (list) ->
-    for name, feature of list
-      feature = _buildFeature(name, feature.active, feature.available)
-      features[name] = feature
-      _log "Added feature #{name}. %O", feature
+    for name, state of list
+      features[name] = state
+      _log "Added feature #{name}: #{state}"
 
-      if _shouldActivate(feature)
-        activate(feature.name)
+      if _shouldActivate(name)
+        activate(name)
 
-  # TODO: Move to null object pattern
   get = (name) ->
     features[name]
-
-  _buildFeature = (name, active, available) ->
-    name:                name
-    active:              if active?    then active    else false
-    available:           if available? then available else true
 
   # TODO: Move to null object pattern
   activate = (name) ->
@@ -80,7 +73,7 @@ define ->
       _log "Attempted to deactivate #{name}, but it was already inactive. %O", feature
 
   isActive = (name) ->
-    get(name)?.active
+    get(name) == 'active'
 
   _buildSubscriber = (onActivate, onDeactivate) ->
     onActivate:   if onActivate?   then onActivate else ->

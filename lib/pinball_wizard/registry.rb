@@ -6,16 +6,15 @@ module PinballWizard
     extend self
 
     def add(feature)
-      collection[feature.name.to_s] = feature
+      collection[feature.name] = feature
     end
 
     def get(name)
-      collection[name.to_s]
+      collection.fetch(name.to_s) { null_feature }
     end
 
-    def available?(name)
-      feature = collection.fetch(name.to_s) { null_feature }
-      feature.available?
+    def disabled?(name)
+      get(name).disabled?
     end
 
     def collection
@@ -27,7 +26,10 @@ module PinballWizard
     end
 
     def to_h
-      Helpers::Hash.camelize_hash_keys(collection)
+      pairs = collection.map do |name, feature|
+        [feature.to_s, feature.state]
+      end
+      ::Hash[pairs]
     end
 
     alias_method :to_hash, :to_h
@@ -35,7 +37,11 @@ module PinballWizard
     private
 
     def null_feature
-      Feature.new 'null_feature', available: false
+      Feature.new('null_feature', {
+        active: proc do
+          disable 'Feature not found'
+        end
+      })
     end
   end
 end

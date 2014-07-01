@@ -10,8 +10,12 @@ describe PinballWizard::Registry do
     PinballWizard::Feature.new 'default'
   end
 
-  let(:not_available_feature) do
-    PinballWizard::Feature.new 'not_available', available: false
+  let(:disabled_feature) do
+    PinballWizard::Feature.new('disabled', {
+      active: proc do
+        disable 'Reason'
+      end
+    })
   end
 
   describe '.add' do
@@ -23,19 +27,19 @@ describe PinballWizard::Registry do
     end
   end
 
-  describe '.available?' do
-    it 'should be false for a non-available feature' do
-      PinballWizard::Registry.add(not_available_feature)
-      expect(PinballWizard::Registry.available?('not_available')).to eq(false)
+  describe '.disabled?' do
+    it 'should be true for a disabled feature' do
+      PinballWizard::Registry.add(disabled_feature)
+      expect(PinballWizard::Registry.disabled?('disabled')).to eq(true)
     end
 
-    it 'should be false for a non-existant feature' do
-      expect(PinballWizard::Registry.available?('foo')).to eq(false)
+    it 'should be true for a non-existant feature' do
+      expect(PinballWizard::Registry.disabled?('foo')).to eq(true)
     end
 
-    it 'should be true for an available feature' do
+    it 'should be false for a active feature' do
       PinballWizard::Registry.add(default_feature)
-      expect(PinballWizard::Registry.available?('default')).to eq(true)
+      expect(PinballWizard::Registry.disabled?('default')).to eq(false)
     end
   end
 
@@ -43,7 +47,7 @@ describe PinballWizard::Registry do
     it 'should build a hash' do
       PinballWizard::Registry.add(default_feature)
       expect(PinballWizard::Registry.to_h).to eq({
-        'default' => { 'active' => false, 'available' => true }
+        'default' => 'inactive'
       })
     end
   end

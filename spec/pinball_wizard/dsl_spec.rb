@@ -11,18 +11,16 @@ describe PinballWizard::DSL do
       before(:each) do
         PinballWizard::DSL.build do
           feature :example_a
-          feature :example_b, available: false
-          feature :example_c, :active
-          feature :example_d, available: proc { false }
+          feature :example_b, :active
+          feature :example_c, active: proc { false }
         end
       end
 
       it 'adds to the registry' do
         expect(PinballWizard::Registry.to_h).to eq({
-          'example_a' => { 'active' => false, 'available' => true  },
-          'example_b' => { 'active' => false, 'available' => false },
-          'example_c' => { 'active' => true,  'available' => true  },
-          'example_d' => { 'active' => false, 'available' => false }
+          'example_a' => 'inactive',
+          'example_b' => 'active',
+          'example_c' => 'inactive'
         })
       end
 
@@ -33,8 +31,7 @@ describe PinballWizard::DSL do
 
     context 'with a builder class flag' do
 
-      class MyCustomFeature < PinballWizard::Feature
-      end
+      class MyCustomFeature < PinballWizard::Feature; end
 
       before(:each) do
         PinballWizard::DSL.build do
@@ -46,8 +43,8 @@ describe PinballWizard::DSL do
 
       it 'adds to the registry' do
         expect(PinballWizard::Registry.to_h).to eq({
-          'example_a' => { 'active' => false, 'available' => true },
-          'example_b' => { 'active' => false, 'available' => true }
+          'example_a' => 'inactive',
+          'example_b' => 'inactive'
         })
       end
 

@@ -2,32 +2,46 @@ require 'pinball_wizard'
 
 describe PinballWizard::Feature do
 
-  describe '#available?' do
-    context 'without setting a value' do
+  describe '#state' do
+    context 'with defaults' do
       subject { PinballWizard::Feature.new 'example' }
 
-      it 'should be available' do
-        expect(subject).to be_available
+      it 'should not be active' do
+        expect(subject.state).to eq('inactive')
       end
     end
 
-    context 'with a boolean value' do
+    context 'when setting active to a boolean' do
       subject do
-        PinballWizard::Feature.new 'example', available: false
+        PinballWizard::Feature.new 'example', active: true
       end
 
-      it 'should not be available' do
-        expect(subject).not_to be_available
+      it 'should be activate' do
+        expect(subject.state).to eq('active')
       end
     end
 
-    context 'with a proc' do
+    context 'when setting active to a proc' do
       subject do
-        PinballWizard::Feature.new 'example', available: proc { false }
+        PinballWizard::Feature.new 'example', active: proc { true }
       end
 
-      it 'should not be available' do
-        expect(subject).not_to be_available
+      it 'should be activate' do
+        expect(subject.state).to eq('active')
+      end
+
+      context 'is disabled in the proc' do
+        subject do
+          PinballWizard::Feature.new('example', {
+            active: proc do
+              disable "Reason"
+            end
+          })
+        end
+
+        it 'should be disabled' do
+          expect(subject.state).to eq('disabled: Reason')
+        end
       end
     end
   end
@@ -63,57 +77,11 @@ describe PinballWizard::Feature do
   end
 
   describe '#name' do
-     context 'with a long name' do
-      subject do
-        PinballWizard::Feature.new 'my_super_duper'
-      end
-
-      it 'should underscore the name' do
-        expect(subject.name).to eq('my_super_duper')
-      end
-    end
-  end
-
-  describe '#to_h' do
-    context 'using defaults' do
-      subject { PinballWizard::Feature.new 'example' }
-
-      it 'should build a hash' do
-        expect(subject.to_h).to eq({
-          active:    false,
-          available: true
-        })
-      end
+    subject do
+      PinballWizard::Feature.new('my_super_duper').name
     end
 
-    context 'when using boolean values' do
-      subject do
-        PinballWizard::Feature.new 'example', active: true, available: false
-      end
-
-      it 'should build a hash' do
-        expect(subject.to_h).to eq({
-          active:    true,
-          available: false
-        })
-      end
-    end
-
-    context 'when using procs' do
-      subject do
-        PinballWizard::Feature.new('example', {
-          active:    proc { true },
-          available: proc { false }
-        })
-      end
-
-      it 'should build a hash' do
-        expect(subject.to_h).to eq({
-          active:    true,
-          available: false
-        })
-      end
-    end
+    it { should eq('my_super_duper') }
   end
 
   describe '.new' do
