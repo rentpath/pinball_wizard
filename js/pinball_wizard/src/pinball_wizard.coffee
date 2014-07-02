@@ -20,7 +20,7 @@ define ->
       _notifySubscriberOnActivate(subscriber, name)
 
   _notifySubscriberOnActivate = (subscriber, name) ->
-    _log 'Notify subscriber that %s is activate', name
+    _log 'Notify subscriber that %s is active', name
     subscriber.onActivate()
 
   _notifySubscribersOnDeactivate = (name) ->

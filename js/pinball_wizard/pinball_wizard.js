@@ -31,7 +31,7 @@
       return _results;
     };
     _notifySubscriberOnActivate = function(subscriber, name) {
-      _log('Notify subscriber that %s is activate', name);
+      _log('Notify subscriber that %s is active', name);
       return subscriber.onActivate();
     };
     _notifySubscribersOnDeactivate = function(name) {
