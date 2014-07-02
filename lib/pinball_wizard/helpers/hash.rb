@@ -1,27 +1,8 @@
-require 'pinball_wizard/helpers/string'
-
 # Further Reading: https://practicingruby.com/articles/ruby-and-the-singleton-pattern-dont-get-along
 module PinballWizard
   module Helpers
     module Hash
       module_function
-
-      # foo: { bar_baz: 'v' }
-      #  =>
-      # 'foo' => { 'barBaz' => 'v' }
-      def camelize_hash_keys(hash)
-        pairs = hash.map do |name, value|
-          [name.to_s, camelize_keys(value.to_hash)]
-        end
-        ::Hash[pairs]
-      end
-
-      def camelize_keys(hash)
-        camelized = hash.map do |k, v|
-          [String.camelize(k), v]
-        end
-        ::Hash[camelized]
-      end
 
       # Convert [:a, :b, { c: 'd' }] => { a: true, b: true, c: 'd' }
       def normalize_options(options)
@@ -43,4 +24,3 @@ module PinballWizard
     end
   end
 end
-
