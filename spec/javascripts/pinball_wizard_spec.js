@@ -87,7 +87,7 @@
           a: 'inactive'
         });
         pinball.activate('a');
-        return expect(pinball.get('a')).toEqual('inactive');
+        return expect(pinball.get('a')).toEqual('active');
       });
       return it('does not make a disabled feature active', function() {
         pinball.add({

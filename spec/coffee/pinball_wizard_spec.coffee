@@ -5,12 +5,10 @@ require ['pinball_wizard'], (pinball) ->
     pinball.reset()
 
   describe 'initialize', ->
-
     it 'is defined', ->
       expect(pinball).toBeDefined()
 
   describe '#reset', ->
-
     it 'removes all features', ->
       pinball.add
         a: 'active'
@@ -18,7 +16,6 @@ require ['pinball_wizard'], (pinball) ->
       expect(pinball.state()).toEqual({})
 
   describe '#add', ->
-
     it 'activates if active', ->
       pinball.add
         a: 'active'
@@ -73,13 +70,12 @@ require ['pinball_wizard'], (pinball) ->
       })
 
   describe '#activate', ->
-
     it 'makes an inactive feature active', ->
       pinball.add
         a: 'inactive'
       pinball.activate 'a'
 
-      expect(pinball.get('a')).toEqual('inactive')
+      expect(pinball.get('a')).toEqual('active')
 
     it 'does not make a disabled feature active', ->
       pinball.add
@@ -89,7 +85,6 @@ require ['pinball_wizard'], (pinball) ->
       expect(pinball.get('a')).toEqual('disabled')
 
   describe '#deactivate', ->
-
     it 'makes an active feature inactive', ->
       pinball.add
         a: 'active'
@@ -98,7 +93,6 @@ require ['pinball_wizard'], (pinball) ->
       expect(pinball.get('a')).toEqual('inactive')
 
   describe '#isActive', ->
-
     beforeEach ->
       pinball.add
         a: 'inactive'
@@ -108,7 +102,6 @@ require ['pinball_wizard'], (pinball) ->
       expect(pinball.isActive('a')).toEqual(true)
 
   describe '#subscribe', ->
-
     callback = null
     beforeEach ->
       callback = jasmine.createSpy('callback')

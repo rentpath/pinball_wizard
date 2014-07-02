@@ -7,10 +7,11 @@ define ->
 
   urlPrefix = 'pinball_'
   showLog = false
+  logPrefix = '[PinballWizard]'
 
-  _log = (message, args = {}, prefix = '[pinball.js]') ->
+  _log = (message, args...) ->
     if showLog && window.console && window.console.log
-      console.log("#{prefix} #{message}", args)
+      console.log("#{logPrefix} #{message}", args...)
     return
 
   _notifySubscribersOnActivate = (name) ->
@@ -19,7 +20,7 @@ define ->
       _notifySubscriberOnActivate(subscriber, name)
 
   _notifySubscriberOnActivate = (subscriber, name) ->
-    _log 'Notify subscriber that %O is activate', name
+    _log 'Notify subscriber that %s is activate', name
     subscriber.onActivate()
 
   _notifySubscribersOnDeactivate = (name) ->
@@ -36,7 +37,7 @@ define ->
   add = (list) ->
     for name, state of list
       features[name] = state
-      _log "Added feature #{name}: #{state}"
+      _log "Added %s: %s.", name, state
 
       if _shouldActivate(name)
         activate(name)
@@ -44,33 +45,34 @@ define ->
   get = (name) ->
     features[name]
 
-  # TODO: Move to null object pattern
-  activate = (name) ->
-    feature = get(name)
-    if feature? == false
-      _log "Attempted to activate #{name}, but it was not found."
-    else if feature?.available
-      if feature.active
-        _log "Attempted to activate #{name}, but it is already active. %O", feature
-      else
-        _log "Activate feature #{name}. %O", feature
-        feature.active = true
-        _notifySubscribersOnActivate(name)
-    else
-      _log "Attempted to activate #{name}, but it is not available. %O", feature
+  update = (name, state) ->
+    features[name] = state
 
-  # NOTE: This method is a long term goal and may be removed. Do not rely on it.
-  # TODO: Move to null object pattern
+  activate = (name) ->
+    state = get(name)
+    switch state
+      when undefined
+        _log "Attempted to activate %s, but it was not found.", name
+      when 'inactive'
+        _log "Activate %s.", name
+        update(name, 'active')
+        _notifySubscribersOnActivate(name)
+      when 'active'
+        _log "Attempted to activate %s, but it is already active.", name
+      else
+        _log "Attempted to activate %s, but it is %s", name, state
+
   deactivate = (name) ->
-    feature = get(name)
-    if feature? == false
-      _log "Attempted to deactivate #{name}, but it was not found."
-    else if feature?.active
-      _log "Dectivate feature #{name}. %O", feature
-      feature.active = false
-      _notifySubscribersOnDeactivate(name)
-    else
-      _log "Attempted to deactivate #{name}, but it was already inactive. %O", feature
+    state = get(name)
+    switch state
+      when undefined
+        _log "Attempted to deactivate %s, but it was not found.", name
+      when 'active'
+        _log "Dectivate %s.", name
+        update(name, 'inactive')
+        _notifySubscribersOnDeactivate(name)
+      else
+        _log "Attempted to deactivate %s, but it is %s.", name, state
 
   isActive = (name) ->
     get(name) == 'active'
@@ -79,9 +81,9 @@ define ->
     onActivate:   if onActivate?   then onActivate else ->
     onDeactivate: if onDeactivate? then onDeactivate else ->
 
-  # If the feature is already active, the callback will immediately be invoked.
+  # If the feature is already active, the callback is invoked immediately.
   subscribe = (name, onActivate, onDeactivate) ->
-    _log 'Added subscriber to %O', name
+    _log 'Added subscriber to %s', name
     subscriber = _buildSubscriber(onActivate, onDeactivate)
     subscribers[name] ?= []
     subscribers[name].push(subscriber)
