@@ -47,16 +47,15 @@ define ->
     []
   urlValues = _urlValues() # Memoize
 
-  _shouldActivateAfterAdd = (name) ->
-    isActive(name) or _urlKeyMatches(name) or _urlValueMatches(name, urlValues)
-
   add = (list) ->
     for name, state of list
       features[name] = state
       _log "Added %s: %s.", name, state
 
-      if _shouldActivateAfterAdd(name)
-        activate(name)
+      if isActive(name)
+        activate(name, "automatic. added as '#{state}'")
+      else if _urlKeyMatches(name) or _urlValueMatches(name, urlValues)
+        activate(name, 'URL')
 
   get = (name) ->
     features[name]

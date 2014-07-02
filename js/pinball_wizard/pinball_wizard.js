@@ -4,7 +4,7 @@
   var __slice = [].slice;
 
   define(function() {
-    var activate, add, deactivate, debug, exports, features, get, isActive, logPrefix, push, reset, showLog, state, subscribe, subscribers, update, urlPrefix, urlValues, _buildSubscriber, _log, _notifySubscriberOnActivate, _notifySubscribersOnActivate, _notifySubscribersOnDeactivate, _shouldActivateAfterAdd, _urlKeyMatches, _urlValueMatches, _urlValues;
+    var activate, add, deactivate, debug, exports, features, get, isActive, logPrefix, push, reset, showLog, state, subscribe, subscribers, update, urlPrefix, urlValues, _buildSubscriber, _log, _notifySubscriberOnActivate, _notifySubscribersOnActivate, _notifySubscribersOnDeactivate, _urlKeyMatches, _urlValueMatches, _urlValues;
     features = {};
     subscribers = {};
     urlPrefix = 'pinball_';
@@ -77,9 +77,6 @@
       return [];
     };
     urlValues = _urlValues();
-    _shouldActivateAfterAdd = function(name) {
-      return isActive(name) || _urlKeyMatches(name) || _urlValueMatches(name, urlValues);
-    };
     add = function(list) {
       var name, state, _results;
       _results = [];
@@ -87,8 +84,10 @@
         state = list[name];
         features[name] = state;
         _log("Added %s: %s.", name, state);
-        if (_shouldActivateAfterAdd(name)) {
-          _results.push(activate(name));
+        if (isActive(name)) {
+          _results.push(activate(name, "automatic. added as '" + state + "'"));
+        } else if (_urlKeyMatches(name) || _urlValueMatches(name, urlValues)) {
+          _results.push(activate(name, 'URL'));
         } else {
           _results.push(void 0);
         }
