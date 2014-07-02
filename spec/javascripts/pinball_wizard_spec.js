@@ -38,7 +38,7 @@
         });
         return expect(pinball.isActive('a')).toEqual(false);
       });
-      return describe('with a url param', function() {
+      describe('with a ?pinball_feature url param', function() {
         var originalPathname;
         originalPathname = null;
         beforeEach(function() {
@@ -56,7 +56,7 @@
           });
           return expect(pinball.isActive('a')).toEqual(false);
         });
-        return it('is active with a matching url param', function() {
+        return it('is active when matching', function() {
           var urlParam;
           urlParam = '?pinball_a';
           window.history.replaceState(null, null, window.location.pathname + urlParam);
@@ -64,6 +64,38 @@
             a: 'inactive'
           });
           return expect(pinball.isActive('a')).toEqual(true);
+        });
+      });
+      return describe('with a ?pinball=feature,feature url param', function() {
+        var originalPathname;
+        originalPathname = null;
+        beforeEach(function() {
+          return originalPathname = window.location.pathname;
+        });
+        afterEach(function() {
+          return window.history.replaceState(null, null, originalPathname);
+        });
+        it('is not active when mismatched', function() {
+          var urlParam;
+          urlParam = '?pinball=foo,bar';
+          window.history.replaceState(null, null, window.location.pathname + urlParam);
+          pinball.add({
+            a: 'inactive',
+            b: 'inactive'
+          });
+          expect(pinball.isActive('a')).toEqual(false);
+          return expect(pinball.isActive('b')).toEqual(false);
+        });
+        return it('is active when matching', function() {
+          var urlParam;
+          urlParam = '?pinball=a,b';
+          window.history.replaceState(null, null, window.location.pathname + urlParam);
+          pinball.add({
+            a: 'inactive',
+            b: 'inactive'
+          });
+          expect(pinball.isActive('a')).toEqual(true);
+          return expect(pinball.isActive('b')).toEqual(true);
         });
       });
     });
@@ -262,6 +294,23 @@
         spyOn(pinball, 'activate');
         pinball.push(['activate', 'my-feature']);
         return expect(pinball.activate).toHaveBeenCalledWith('my-feature');
+      });
+    });
+    describe('#_urlValues', function() {
+      it('pulls out the parts', function() {
+        var urlParam;
+        urlParam = '?pinball=a,b';
+        return expect(pinball._urlValues(urlParam)).toEqual(['a', 'b']);
+      });
+      it('is empty for blank values', function() {
+        var urlParam;
+        urlParam = '?pinball';
+        return expect(pinball._urlValues(urlParam)).toEqual([]);
+      });
+      return it('works with other keys/values', function() {
+        var urlParam;
+        urlParam = '?foo=bar&pinball=a,b&bar';
+        return expect(pinball._urlValues(urlParam)).toEqual(['a', 'b']);
       });
     });
     return jasmine.getEnv().execute();

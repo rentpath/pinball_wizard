@@ -4,7 +4,7 @@
   var __slice = [].slice;
 
   define(function() {
-    var activate, add, deactivate, debug, exports, features, get, isActive, logPrefix, push, reset, showLog, state, subscribe, subscribers, update, urlPrefix, _buildSubscriber, _log, _notifySubscriberOnActivate, _notifySubscribersOnActivate, _notifySubscribersOnDeactivate, _shouldActivate, _urlMatches;
+    var activate, add, deactivate, debug, exports, features, get, isActive, logPrefix, push, reset, showLog, state, subscribe, subscribers, update, urlPrefix, urlValues, _buildSubscriber, _log, _notifySubscriberOnActivate, _notifySubscribersOnActivate, _notifySubscribersOnDeactivate, _shouldActivateAfterAdd, _urlKeyMatches, _urlValueMatches, _urlValues;
     features = {};
     subscribers = {};
     urlPrefix = 'pinball_';
@@ -47,11 +47,38 @@
       }
       return _results;
     };
-    _urlMatches = function(name) {
+    _urlKeyMatches = function(name) {
       return window.location.search.indexOf("" + urlPrefix + name) !== -1;
     };
-    _shouldActivate = function(name) {
-      return isActive(name) || _urlMatches(name);
+    _urlValueMatches = function(value) {
+      var v, _i, _len, _ref;
+      _ref = _urlValues();
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        v = _ref[_i];
+        if (value === v) {
+          return true;
+        }
+      }
+      return false;
+    };
+    _urlValues = function(search) {
+      var key, pair, pairs, value, _i, _len, _ref;
+      if (search == null) {
+        search = window.location.search;
+      }
+      pairs = search.substr(1).split('&');
+      for (_i = 0, _len = pairs.length; _i < _len; _i++) {
+        pair = pairs[_i];
+        _ref = pair.split('='), key = _ref[0], value = _ref[1];
+        if (key === 'pinball' && (value != null)) {
+          return value.split(',');
+        }
+      }
+      return [];
+    };
+    urlValues = _urlValues();
+    _shouldActivateAfterAdd = function(name) {
+      return isActive(name) || _urlKeyMatches(name) || _urlValueMatches(name, urlValues);
     };
     add = function(list) {
       var name, state, _results;
@@ -60,7 +87,7 @@
         state = list[name];
         features[name] = state;
         _log("Added %s: %s.", name, state);
-        if (_shouldActivate(name)) {
+        if (_shouldActivateAfterAdd(name)) {
           _results.push(activate(name));
         } else {
           _results.push(void 0);
@@ -149,9 +176,13 @@
       push: push,
       state: state,
       reset: reset,
-      debug: debug
+      debug: debug,
+      _urlValues: _urlValues
     };
     if (typeof window !== "undefined" && window !== null ? window.pinball : void 0) {
+      if (_urlValueMatches('debug')) {
+        debug();
+      }
       while (window.pinball.length) {
         exports.push(window.pinball.shift());
       }

@@ -31,7 +31,7 @@ require ['pinball_wizard'], (pinball) ->
         a: 'disabled: reason'
       expect(pinball.isActive('a')).toEqual(false)
 
-    describe 'with a url param', ->
+    describe 'with a ?pinball_feature url param', ->
 
       originalPathname = null
 
@@ -48,13 +48,42 @@ require ['pinball_wizard'], (pinball) ->
           a: 'inactive'
         expect(pinball.isActive('a')).toEqual(false)
 
-      it 'is active with a matching url param', ->
+      it 'is active when matching', ->
         urlParam = '?pinball_a'
         # Mock a different url
         window.history.replaceState(null, null, window.location.pathname + urlParam)
         pinball.add
           a: 'inactive'
         expect(pinball.isActive('a')).toEqual(true)
+
+    describe 'with a ?pinball=feature,feature url param', ->
+
+      originalPathname = null
+
+      beforeEach ->
+        originalPathname = window.location.pathname
+
+      afterEach ->
+        window.history.replaceState(null, null, originalPathname)
+
+      it 'is not active when mismatched', ->
+        urlParam = '?pinball=foo,bar'
+        window.history.replaceState(null, null, window.location.pathname + urlParam)
+        pinball.add
+          a: 'inactive'
+          b: 'inactive'
+        expect(pinball.isActive('a')).toEqual(false)
+        expect(pinball.isActive('b')).toEqual(false)
+
+      it 'is active when matching', ->
+        urlParam = '?pinball=a,b'
+        # Mock a different url
+        window.history.replaceState(null, null, window.location.pathname + urlParam)
+        pinball.add
+          a: 'inactive'
+          b: 'inactive'
+        expect(pinball.isActive('a')).toEqual(true)
+        expect(pinball.isActive('b')).toEqual(true)
 
   describe '#state', ->
     it 'displays a list based on state', ->
@@ -227,6 +256,19 @@ require ['pinball_wizard'], (pinball) ->
       spyOn(pinball, 'activate')
       pinball.push ['activate','my-feature']
       expect(pinball.activate).toHaveBeenCalledWith('my-feature')
+
+  describe '#_urlValues', ->
+    it 'pulls out the parts', ->
+      urlParam = '?pinball=a,b'
+      expect(pinball._urlValues(urlParam)).toEqual(['a','b'])
+
+    it 'is empty for blank values', ->
+      urlParam = '?pinball'
+      expect(pinball._urlValues(urlParam)).toEqual([])
+
+    it 'works with other keys/values', ->
+      urlParam = '?foo=bar&pinball=a,b&bar'
+      expect(pinball._urlValues(urlParam)).toEqual(['a','b'])
 
   # Jasmine 2.0 Works on window.onload and doesn't play well with requirejs
   jasmine.getEnv().execute()

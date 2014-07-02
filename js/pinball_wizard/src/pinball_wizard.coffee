@@ -28,18 +28,34 @@ define ->
     for subscriber in subscribers[name]
       subscriber.onDeactivate()
 
-  _urlMatches = (name) ->
+  # Original ?pinball_name Version
+  _urlKeyMatches = (name) ->
     window.location.search.indexOf("#{urlPrefix}#{name}") != -1
 
-  _shouldActivate = (name) ->
-    isActive(name) or _urlMatches(name)
+  # Support ?pinball=name1,name2,debug
+  _urlValueMatches = (value) ->
+    for v in _urlValues()
+      return true if value == v
+    false
+
+  _urlValues = (search = window.location.search) ->
+    pairs = search.substr(1).split('&')
+    for pair in pairs
+      [key, value] = pair.split('=')
+      if key == 'pinball' and value?
+        return value.split(',')
+    []
+  urlValues = _urlValues() # Memoize
+
+  _shouldActivateAfterAdd = (name) ->
+    isActive(name) or _urlKeyMatches(name) or _urlValueMatches(name, urlValues)
 
   add = (list) ->
     for name, state of list
       features[name] = state
       _log "Added %s: %s.", name, state
 
-      if _shouldActivate(name)
+      if _shouldActivateAfterAdd(name)
         activate(name)
 
   get = (name) ->
@@ -104,18 +120,21 @@ define ->
 
   # Exports
   exports =
-    add:        add
-    get:        get
-    activate:   activate
-    deactivate: deactivate
-    isActive:   isActive
-    subscribe:  subscribe
-    push:       push
-    state:      state
-    reset:      reset
-    debug:      debug
+    add:          add
+    get:          get
+    activate:     activate
+    deactivate:   deactivate
+    isActive:     isActive
+    subscribe:    subscribe
+    push:         push
+    state:        state
+    reset:        reset
+    debug:        debug
+    _urlValues:  _urlValues
 
+  # Initialize
   if window?.pinball
+    debug() if _urlValueMatches('debug')
     while window.pinball.length
       exports.push window.pinball.shift()
     window.pinball = exports
