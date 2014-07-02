@@ -64,31 +64,33 @@ define ->
   update = (name, state) ->
     features[name] = state
 
-  activate = (name) ->
+  activate = (name, sourceName = null) ->
     state = get(name)
+    source = if sourceName? then " (source: #{sourceName})" else ''
     switch state
       when undefined
-        _log "Attempted to activate %s, but it was not found.", name
+        _log "Attempted to activate %s, but it was not found%s.", name, source
       when 'inactive'
-        _log "Activate %s.", name
+        _log "Activate %s%s.", name, source
         update(name, 'active')
         _notifySubscribersOnActivate(name)
       when 'active'
-        _log "Attempted to activate %s, but it is already active.", name
+        _log "Attempted to activate %s, but it is already active%s.", name, source
       else
-        _log "Attempted to activate %s, but it is %s", name, state
+        _log "Attempted to activate %s, but it is %s%s.", name, state, source
 
-  deactivate = (name) ->
+  deactivate = (name, source = null) ->
     state = get(name)
+    source = if sourceName? then " (source: #{sourceName})" else ''
     switch state
       when undefined
-        _log "Attempted to deactivate %s, but it was not found.", name
+        _log "Attempted to deactivate %s, but it was not found%s.", name, source
       when 'active'
-        _log "Dectivate %s.", name
+        _log "Dectivate %s%s.", name, source
         update(name, 'inactive')
         _notifySubscribersOnDeactivate(name)
       else
-        _log "Attempted to deactivate %s, but it is %s.", name, state
+        _log "Attempted to deactivate %s, but it is %s%s.", name, state, source
 
   isActive = (name) ->
     get(name) == 'active'

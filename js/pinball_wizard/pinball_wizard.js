@@ -101,34 +101,42 @@
     update = function(name, state) {
       return features[name] = state;
     };
-    activate = function(name) {
-      var state;
+    activate = function(name, sourceName) {
+      var source, state;
+      if (sourceName == null) {
+        sourceName = null;
+      }
       state = get(name);
+      source = sourceName != null ? " (source: " + sourceName + ")" : '';
       switch (state) {
         case void 0:
-          return _log("Attempted to activate %s, but it was not found.", name);
+          return _log("Attempted to activate %s, but it was not found%s.", name, source);
         case 'inactive':
-          _log("Activate %s.", name);
+          _log("Activate %s%s.", name, source);
           update(name, 'active');
           return _notifySubscribersOnActivate(name);
         case 'active':
-          return _log("Attempted to activate %s, but it is already active.", name);
+          return _log("Attempted to activate %s, but it is already active%s.", name, source);
         default:
-          return _log("Attempted to activate %s, but it is %s", name, state);
+          return _log("Attempted to activate %s, but it is %s%s.", name, state, source);
       }
     };
-    deactivate = function(name) {
+    deactivate = function(name, source) {
       var state;
+      if (source == null) {
+        source = null;
+      }
       state = get(name);
+      source = typeof sourceName !== "undefined" && sourceName !== null ? " (source: " + sourceName + ")" : '';
       switch (state) {
         case void 0:
-          return _log("Attempted to deactivate %s, but it was not found.", name);
+          return _log("Attempted to deactivate %s, but it was not found%s.", name, source);
         case 'active':
-          _log("Dectivate %s.", name);
+          _log("Dectivate %s%s.", name, source);
           update(name, 'inactive');
           return _notifySubscribersOnDeactivate(name);
         default:
-          return _log("Attempted to deactivate %s, but it is %s.", name, state);
+          return _log("Attempted to deactivate %s, but it is %s%s.", name, state, source);
       }
     };
     isActive = function(name) {
