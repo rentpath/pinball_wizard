@@ -13,56 +13,32 @@
     describe('#reset', function() {
       return it('removes all features', function() {
         pinball.add({
-          a: {}
+          a: 'active'
         });
         pinball.reset();
         return expect(pinball.state()).toEqual({});
       });
     });
     describe('#add', function() {
-      it('is available by default', function() {
+      it('activates if active', function() {
         pinball.add({
-          a: {}
-        });
-        return expect(pinball.get('a').available).toEqual(true);
-      });
-      it('is not activeByDefault', function() {
-        pinball.add({
-          a: {}
-        });
-        return expect(pinball.get('a').activeByDefault).toEqual(false);
-      });
-      it('honors available and activeByDefault attributes', function() {
-        pinball.add({
-          a: {
-            available: true,
-            activeByDefault: true
-          }
-        });
-        return expect(pinball.get('a')).toEqual({
-          name: 'a',
-          available: true,
-          active: true,
-          activeByDefault: true
-        });
-      });
-      it('activates if activeByDefault', function() {
-        pinball.add({
-          a: {
-            activeByDefault: true
-          }
+          a: 'active'
         });
         return expect(pinball.isActive('a')).toEqual(true);
       });
-      it('does not activate if activeByDefault is false', function() {
+      it('does not activate if inactive', function() {
         pinball.add({
-          a: {
-            activeByDefault: false
-          }
+          a: 'inactive'
         });
         return expect(pinball.isActive('a')).toEqual(false);
       });
-      return describe('with a url param', function() {
+      it('does not activate if disabled', function() {
+        pinball.add({
+          a: 'disabled: reason'
+        });
+        return expect(pinball.isActive('a')).toEqual(false);
+      });
+      describe('with a ?pinball_feature url param', function() {
         var originalPathname;
         originalPathname = null;
         beforeEach(function() {
@@ -71,126 +47,106 @@
         afterEach(function() {
           return window.history.replaceState(null, null, originalPathname);
         });
-        it('is not activate when mismatched', function() {
+        it('is not active when mismatched', function() {
           var urlParam;
           urlParam = '?pinball_foo';
           window.history.replaceState(null, null, window.location.pathname + urlParam);
           pinball.add({
-            a: {}
+            a: 'inactive'
           });
           return expect(pinball.isActive('a')).toEqual(false);
         });
-        return it('is activate with a missing url param', function() {
+        return it('is active when matching', function() {
           var urlParam;
           urlParam = '?pinball_a';
           window.history.replaceState(null, null, window.location.pathname + urlParam);
           pinball.add({
-            a: {}
+            a: 'inactive'
           });
           return expect(pinball.isActive('a')).toEqual(true);
+        });
+      });
+      return describe('with a ?pinball=feature,feature url param', function() {
+        var originalPathname;
+        originalPathname = null;
+        beforeEach(function() {
+          return originalPathname = window.location.pathname;
+        });
+        afterEach(function() {
+          return window.history.replaceState(null, null, originalPathname);
+        });
+        it('is not active when mismatched', function() {
+          var urlParam;
+          urlParam = '?pinball=foo,bar';
+          window.history.replaceState(null, null, window.location.pathname + urlParam);
+          pinball.add({
+            a: 'inactive',
+            b: 'inactive'
+          });
+          expect(pinball.isActive('a')).toEqual(false);
+          return expect(pinball.isActive('b')).toEqual(false);
+        });
+        return it('is active when matching', function() {
+          var urlParam;
+          urlParam = '?pinball=a,b';
+          window.history.replaceState(null, null, window.location.pathname + urlParam);
+          pinball.add({
+            a: 'inactive',
+            b: 'inactive'
+          });
+          expect(pinball.isActive('a')).toEqual(true);
+          return expect(pinball.isActive('b')).toEqual(true);
         });
       });
     });
     describe('#state', function() {
       return it('displays a list based on state', function() {
         pinball.add({
-          a: {
-            activeByDefault: true
-          },
-          b: {},
-          c: {
-            available: false
-          }
+          a: 'active',
+          b: 'inactive',
+          c: 'disabled: reason'
         });
         return expect(pinball.state()).toEqual({
-          a: {
-            name: 'a',
-            available: true,
-            active: true,
-            activeByDefault: true
-          },
-          b: {
-            name: 'b',
-            available: true,
-            active: false,
-            activeByDefault: false
-          },
-          c: {
-            name: 'c',
-            available: false,
-            active: false,
-            activeByDefault: false
-          }
+          a: 'active',
+          b: 'inactive',
+          c: 'disabled: reason'
         });
       });
     });
     describe('#activate', function() {
-      it('makes an available feature active', function() {
+      it('makes an inactive feature active', function() {
         pinball.add({
-          a: {
-            available: true,
-            activeByDefault: true
-          }
+          a: 'inactive'
         });
         pinball.activate('a');
-        return expect(pinball.get('a')).toEqual({
-          name: 'a',
-          available: true,
-          active: true,
-          activeByDefault: true
-        });
+        return expect(pinball.get('a')).toEqual('active');
       });
-      return it('does not make an unavailable feature active', function() {
+      return it('does not make a disabled feature active', function() {
         pinball.add({
-          a: {
-            available: false,
-            activeByDefault: false
-          }
+          a: 'disabled'
         });
         pinball.activate('a');
-        return expect(pinball.get('a')).toEqual({
-          name: 'a',
-          available: false,
-          active: false,
-          activeByDefault: false
-        });
+        return expect(pinball.get('a')).toEqual('disabled');
       });
     });
     describe('#deactivate', function() {
       return it('makes an active feature inactive', function() {
         pinball.add({
-          a: {
-            available: true,
-            activeByDefault: true
-          }
+          a: 'active'
         });
         pinball.deactivate('a');
-        return expect(pinball.get('a')).toEqual({
-          name: 'a',
-          available: true,
-          active: false,
-          activeByDefault: true
-        });
+        return expect(pinball.get('a')).toEqual('inactive');
       });
     });
     describe('#isActive', function() {
       beforeEach(function() {
         return pinball.add({
-          a: {}
+          a: 'inactive'
         });
       });
-      it('is true after activating', function() {
+      return it('is true after activating', function() {
         pinball.activate('a');
         return expect(pinball.isActive('a')).toEqual(true);
-      });
-      return it('is false if not activated', function() {
-        expect(pinball.isActive('a')).toEqual(false);
-        return expect(pinball.get('a')).toEqual({
-          name: 'a',
-          available: true,
-          active: false,
-          activeByDefault: false
-        });
       });
     });
     describe('#subscribe', function() {
@@ -202,7 +158,7 @@
       describe('when the activate callback should be called', function() {
         it('calls after activating', function() {
           pinball.add({
-            a: {}
+            a: 'inactive'
           });
           pinball.subscribe('a', callback);
           pinball.activate('a');
@@ -210,7 +166,7 @@
         });
         it('calls it once on multiple activations', function() {
           pinball.add({
-            a: {}
+            a: 'inactive'
           });
           pinball.subscribe('a', callback);
           pinball.activate('a');
@@ -220,7 +176,7 @@
         });
         it('calls it twice when toggling activations', function() {
           pinball.add({
-            a: {}
+            a: 'inactive'
           });
           pinball.subscribe('a', callback);
           pinball.activate('a');
@@ -228,28 +184,17 @@
           pinball.activate('a');
           return expect(callback.calls.count()).toEqual(2);
         });
-        it('calls when subscribing then adding an activeByDefault feature', function() {
-          pinball.subscribe('a', callback);
-          pinball.add({
-            a: {
-              activeByDefault: true
-            }
-          });
-          return expect(callback).toHaveBeenCalled();
-        });
         it('calls when subscribing then adding and then activating a feature', function() {
           pinball.subscribe('a', callback);
           pinball.add({
-            a: {}
+            a: 'inactive'
           });
           pinball.activate('a');
           return expect(callback).toHaveBeenCalled();
         });
         return it('calls when subscribing to an already active feature', function() {
           pinball.add({
-            a: {
-              activeByDefault: true
-            }
+            a: 'active'
           });
           pinball.subscribe('a', callback);
           return expect(callback).toHaveBeenCalled();
@@ -261,11 +206,9 @@
           pinball.activate('a');
           return expect(callback).not.toHaveBeenCalled();
         });
-        return it('does not call when the feature is not available', function() {
+        return it('does not call when the feature is disabled', function() {
           pinball.add({
-            a: {
-              available: false
-            }
+            a: 'disabled: reason'
           });
           pinball.subscribe('a', callback);
           pinball.activate('a');
@@ -275,7 +218,7 @@
       describe('when the deactivate callback should be called', function() {
         it('calls after deactivate', function() {
           pinball.add({
-            a: {}
+            a: 'inactive'
           });
           pinball.subscribe('a', null, callback);
           pinball.activate('a');
@@ -284,7 +227,7 @@
         });
         it('calls it once on multiple deactivations', function() {
           pinball.add({
-            a: {}
+            a: 'inactive'
           });
           pinball.subscribe('a', null, callback);
           pinball.activate('a');
@@ -294,7 +237,7 @@
         });
         it('calls it twice when toggling deactivations', function() {
           pinball.add({
-            a: {}
+            a: 'inactive'
           });
           pinball.subscribe('a', null, callback);
           pinball.activate('a');
@@ -303,12 +246,10 @@
           pinball.deactivate('a');
           return expect(callback.calls.count()).toEqual(2);
         });
-        it('calls when subscribing, adding adding an activeByDefault then deactivating', function() {
+        it('calls when subscribing, adding adding an active then deactivating', function() {
           pinball.subscribe('a', null, callback);
           pinball.add({
-            a: {
-              activeByDefault: true
-            }
+            a: 'active'
           });
           pinball.deactivate('a');
           return expect(callback).toHaveBeenCalled();
@@ -316,7 +257,7 @@
         return it('calls when subscribing then adding and then deactivating a feature', function() {
           pinball.subscribe('a', null, callback);
           pinball.add({
-            a: {}
+            a: 'inactive'
           });
           pinball.activate('a');
           pinball.deactivate('a');
@@ -324,12 +265,10 @@
         });
       });
       describe('when the deactivate callback should not be called', function() {
-        return it('does not call when subscribing then adding an activeByDefault feature', function() {
+        return it('does not call when subscribing then adding an active feature', function() {
           pinball.subscribe('a', null, callback);
           pinball.add({
-            a: {
-              activeByDefault: true
-            }
+            a: 'active'
           });
           return expect(callback).not.toHaveBeenCalled();
         });
@@ -340,11 +279,9 @@
         pinball.deactivate('a');
         return expect(callback).not.toHaveBeenCalled();
       });
-      return it('does not call when the feature is not available', function() {
+      return it('does not call when the feature is disabled', function() {
         pinball.add({
-          a: {
-            available: false
-          }
+          a: 'disabled'
         });
         pinball.subscribe('a', null, callback);
         pinball.activate('a');
@@ -359,7 +296,26 @@
         return expect(pinball.activate).toHaveBeenCalledWith('my-feature');
       });
     });
+    describe('#_urlValues', function() {
+      it('pulls out the parts', function() {
+        var urlParam;
+        urlParam = '?pinball=a,b';
+        return expect(pinball._urlValues(urlParam)).toEqual(['a', 'b']);
+      });
+      it('is empty for blank values', function() {
+        var urlParam;
+        urlParam = '?pinball';
+        return expect(pinball._urlValues(urlParam)).toEqual([]);
+      });
+      return it('works with other keys/values', function() {
+        var urlParam;
+        urlParam = '?foo=bar&pinball=a,b&bar';
+        return expect(pinball._urlValues(urlParam)).toEqual(['a', 'b']);
+      });
+    });
     return jasmine.getEnv().execute();
   });
 
 }).call(this);
+
+//# sourceMappingURL=pinball_wizard_spec.map

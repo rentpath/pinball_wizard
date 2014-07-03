@@ -1,8 +1,7 @@
 module PinballWizard
-  class NullFeature
-    include Feature
-
-    available false
-    active_by_default false
+  class NullFeature < Feature
+    def determine_state
+      disable 'Feature not found'
+    end
   end
 end

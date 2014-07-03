@@ -1,4 +1,5 @@
 require 'pinball_wizard/helpers/hash'
+require 'pinball_wizard/null_feature'
 
 # Further Reading: https://practicingruby.com/articles/ruby-and-the-singleton-pattern-dont-get-along
 module PinballWizard
@@ -6,12 +7,15 @@ module PinballWizard
     extend self
 
     def add(feature)
-      collection[feature.registry_name] = feature
+      collection[feature.name] = feature
     end
 
-    def available?(name)
-      feature = collection.fetch(name, NullFeature)
-      feature.available?
+    def get(name)
+      collection.fetch(name.to_s) { null_feature }
+    end
+
+    def disabled?(name)
+      get(name).disabled?
     end
 
     def collection
@@ -23,9 +27,18 @@ module PinballWizard
     end
 
     def to_h
-      Helpers::Hash.camelize_hash_keys(collection)
+      pairs = collection.map do |name, feature|
+        [feature.to_s, feature.state]
+      end
+      ::Hash[pairs]
     end
 
     alias_method :to_hash, :to_h
+
+    private
+
+    def null_feature
+      @null_feature ||= NullFeature.new 'null'
+    end
   end
 end

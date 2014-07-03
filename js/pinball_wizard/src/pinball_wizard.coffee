@@ -7,10 +7,11 @@ define ->
 
   urlPrefix = 'pinball_'
   showLog = false
+  logPrefix = '[PinballWizard]'
 
-  _log = (message, args = {}, prefix = '[pinball.js]') ->
+  _log = (message, args...) ->
     if showLog && window.console && window.console.log
-      console.log("#{prefix} #{message}", args)
+      console.log("#{logPrefix} #{message}", args...)
     return
 
   _notifySubscribersOnActivate = (name) ->
@@ -19,7 +20,7 @@ define ->
       _notifySubscriberOnActivate(subscriber, name)
 
   _notifySubscriberOnActivate = (subscriber, name) ->
-    _log 'Notify subscriber that %O is activate', name
+    _log 'Notify subscriber that %s is active', name
     subscriber.onActivate()
 
   _notifySubscribersOnDeactivate = (name) ->
@@ -27,69 +28,79 @@ define ->
     for subscriber in subscribers[name]
       subscriber.onDeactivate()
 
-  _urlMatches = (name) ->
+  # Original ?pinball_name Version
+  _urlKeyMatches = (name) ->
     window.location.search.indexOf("#{urlPrefix}#{name}") != -1
 
-  _shouldActivate = (feature) ->
-    feature.activeByDefault or _urlMatches(feature.name)
+  # Support ?pinball=name1,name2,debug
+  _urlValueMatches = (value) ->
+    for v in _urlValues()
+      return true if value == v
+    false
+
+  _urlValues = (search = window.location.search) ->
+    pairs = search.substr(1).split('&')
+    for pair in pairs
+      [key, value] = pair.split('=')
+      if key == 'pinball' and value?
+        return value.split(',')
+    []
+  urlValues = _urlValues() # Memoize
 
   add = (list) ->
-    for name, feature of list
-      feature = _buildFeature(name, feature.available, feature.activeByDefault)
-      features[name] = feature
-      _log "Added feature #{name}. %O", feature
+    for name, state of list
+      features[name] = state
+      _log "Added %s: %s.", name, state
 
-      if _shouldActivate(feature)
-        activate(feature.name)
+      if isActive(name)
+        activate(name, "automatic. added as '#{state}'")
+      else if _urlKeyMatches(name) or _urlValueMatches(name, urlValues)
+        activate(name, 'URL')
 
-  # TODO: Move to null object pattern
   get = (name) ->
     features[name]
 
-  _buildFeature = (name, available, activeByDefault) ->
-    name:            name
-    available:       if available? then available else true
-    active:          false
-    activeByDefault: if activeByDefault? then activeByDefault else false
+  update = (name, state) ->
+    features[name] = state
 
-  # TODO: Move to null object pattern
-  activate = (name) ->
-    feature = get(name)
-    if feature? == false
-      _log "Attempted to activate #{name}, but it was not found."
-    else if feature?.available
-      if feature.active
-        _log "Attempted to activate #{name}, but it is already active. %O", feature
-      else
-        _log "Activate feature #{name}. %O", feature
-        feature.active = true
+  activate = (name, sourceName = null) ->
+    state = get(name)
+    source = if sourceName? then " (source: #{sourceName})" else ''
+    switch state
+      when undefined
+        _log "Attempted to activate %s, but it was not found%s.", name, source
+      when 'inactive'
+        _log "Activate %s%s.", name, source
+        update(name, 'active')
         _notifySubscribersOnActivate(name)
-    else
-      _log "Attempted to activate #{name}, but it is not available. %O", feature
+      when 'active'
+        _log "Attempted to activate %s, but it is already active%s.", name, source
+      else
+        _log "Attempted to activate %s, but it is %s%s.", name, state, source
 
-  # NOTE: This method is a long term goal and may be removed. Do not rely on it.
-  # TODO: Move to null object pattern
-  deactivate = (name) ->
-    feature = get(name)
-    if feature? == false
-      _log "Attempted to deactivate #{name}, but it was not found."
-    else if feature?.active
-      _log "Dectivate feature #{name}. %O", feature
-      feature.active = false
-      _notifySubscribersOnDeactivate(name)
-    else
-      _log "Attempted to deactivate #{name}, but it was already inactive. %O", feature
+  deactivate = (name, source = null) ->
+    state = get(name)
+    source = if sourceName? then " (source: #{sourceName})" else ''
+    switch state
+      when undefined
+        _log "Attempted to deactivate %s, but it was not found%s.", name, source
+      when 'active'
+        _log "Dectivate %s%s.", name, source
+        update(name, 'inactive')
+        _notifySubscribersOnDeactivate(name)
+      else
+        _log "Attempted to deactivate %s, but it is %s%s.", name, state, source
 
   isActive = (name) ->
-    get(name)?.active
+    get(name) == 'active'
 
   _buildSubscriber = (onActivate, onDeactivate) ->
     onActivate:   if onActivate?   then onActivate else ->
     onDeactivate: if onDeactivate? then onDeactivate else ->
 
-  # If the feature is already active, the callback will immediately be invoked.
+  # If the feature is already active, the callback is invoked immediately.
   subscribe = (name, onActivate, onDeactivate) ->
-    _log 'Added subscriber to %O', name
+    _log 'Added subscriber to %s', name
     subscriber = _buildSubscriber(onActivate, onDeactivate)
     subscribers[name] ?= []
     subscribers[name].push(subscriber)
@@ -110,18 +121,21 @@ define ->
 
   # Exports
   exports =
-    add:        add
-    get:        get
-    activate:   activate
-    deactivate: deactivate
-    isActive:   isActive
-    subscribe:  subscribe
-    push:       push
-    state:      state
-    reset:      reset
-    debug:      debug
+    add:          add
+    get:          get
+    activate:     activate
+    deactivate:   deactivate
+    isActive:     isActive
+    subscribe:    subscribe
+    push:         push
+    state:        state
+    reset:        reset
+    debug:        debug
+    _urlValues:  _urlValues
 
+  # Initialize
   if window?.pinball
+    debug() if _urlValueMatches('debug')
     while window.pinball.length
       exports.push window.pinball.shift()
     window.pinball = exports

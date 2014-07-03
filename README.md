@@ -1,4 +1,4 @@
-# Feature Flipping FTW
+# Client and Server Feature Flipping
 
 <img src="http://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Pinball_Flippers_-_Demolition_Man.JPG/1024px-Pinball_Flippers_-_Demolition_Man.JPG" width="100%">
 
@@ -11,61 +11,44 @@
 
 A set of Ruby, HTML, JavaScript, and CSS that can be turned on or off.
 
-An feature has several attributes:
+A feature is simply a name and a state:
 
-* *Active*: If it is currently turned on and running.
-* *ActiveByDefault*: If it should activate without by itself.
-* *Available*: If it can be activated. Defaults to `true`. Used primarily with other integrations.
+* *active*: If it is currently turned on and running.
+* *inactive*: Not turned on.
+* *disabled*: Not turned on and cannot be activated.
 
 
 ## Building
-1. Define and register the feature in the [Ruby app](#ruby) and set `active_by_default` to `false`.
-2. Build the corresponding [HTML](#html) and [CSS](#css)
-3. Build the [JavaScript component](#javascript).
-4. Test by adding the name prefixed with `pinball_` to the URL param. e.g. `?pinball_example`.
-5. *Optional:* Work with SO to setup the tests according to the name.
+1. Define and register the feature in the [Ruby app](#ruby).
+2. Build the [JavaScript component](#javascript).
+3. Build the corresponding [HTML](#html) and [CSS](#css)
+4. [Activate and test your feature](#activating-and-testing-features).
 
 ## Ruby
 
-Define your feature in `app/features`.
+Define your feature in (typically `config/initializers/pinball_wizard.rb`).
 
 ```ruby
-# app/features/example.rb
+PinballWizard::DSL.build do
+  # Active when the page loads:
+  feature :example, active: true
 
-class ExampleFeature
-  include PinballWizard::Feature
-  available true
-  active_by_default false
+  # Deactive when the page loads:
+  feature :example, active: false
 end
-
-PinballWizard::Registry.add(ExampleFeature)
-
 ```
 
-You can also pass in a block for situtations where availability is conditional.
+You can also pass in a proc for situtations where active/inactive is conditional. Returning false with make the feature inactive.
 
 ```ruby
-# app/features/example.rb
-
-class ExampleFeature
-  include PinballWizard::Feature
-
-  available do
-    # conditionally return true/false
-  end
-
-  active_by_default do
-    # conditionally return true/false
-  end
+PinballWizard::DSL.build do
+  feature :example, active: proc { }
 end
-
-PinballWizard::Registry.add(ExampleFeature)
-
 ```
 
 ## HTML
 
-Once the feature is registered, you can use slim to include the HTML partial found at `app/views/features/example.slim`. This is only included if the feature is available, which allows the HTML to stay small.
+Once the feature is registered, you can use Slim to include the HTML partial found at `app/views/features/example.slim`. This is only included if the feature is available, which allows the HTML to stay small.
 
 ```slim
 = feature 'example'
@@ -73,7 +56,7 @@ Once the feature is registered, you can use slim to include the HTML partial fou
 
 To use a different partial for the same feature, pass in the `partial:` key. This will use `app/views/features/example_button.slim`.
 
-If the feature is not active by default, it's recommended to hide the HTML with inline or external CSS.
+If the feature is not active immediately, it's recommended to hide the HTML with inline or external CSS.
 
 ```slim
 = feature 'example', partial: :example_button'
@@ -99,8 +82,6 @@ Features subscribe to events and respond when they're activated or deactivated. 
 One advantage to this approach is that you can activate features after the DOM is loaded (for testing).
 
 When pinball runs, it will automatically activate the features.
-Deactivating is optional and may not be supported.
-
 
 ### Example AMD/RequireJS Module
 
@@ -146,7 +127,7 @@ define ['pinball_wizard'], (pinball) ->
 ## Activating and Testing Features
 
 ### With a URL Param
-Prefix the name of your example with `pinball_` and append it to the URL (e.g. `?pinball_example`).
+Add `pinball` to the URL (e.g. `?pinball=example_a,example_b`).
 
 ### Post-Render (after page load)
 
@@ -158,22 +139,36 @@ pinball.activate('example');
 pinball.deactivate('example');
 ```
 
-Activating a feature that is already active will have no effect.
+Activating a feature that is already active or disabled will have no effect.
+
+#### Optionally Supply a Source
+
+Add an optional source as a second argument to help know where features are
+activated while debugging.
+
+```javascript
+pinball.activate('example','source name');
+```
+
 
 ## JsConfig
-The application keeps a list of features and passes them in the JsConfig object (e.g. `window.ApartmentGuide`). These define availability and what's active by default. AG is hooked up to PinballWizard to automatically be aware of these. No additional code is necessary.
+The application keeps a list of features and passes them in the JsConfig object (e.g. `window.ApartmentGuide`). These define what's available and activated on page load. AG is hooked up to PinballWizard to automatically be aware of these. No additional code is necessary.
 
-* Array of hashes for each feature
-    * Keys: `available`, `active`, and `activeByDefault`
+`{ "feature_name": "state", "feature_name": "state" }`
+
+e.g. `{ "feature_a": "active", "feature_b": "inactive", "feature_c": "disabled" }`
 
 ## Debugging
 
-Turn on logging:
+Add it to the url:
+`?pinball=debug`
+
+Turn on logging in JavaScript:
 ```js
 pinball.debug();
 ```
 
-Show current state:
+Show current state in the JavaScript console:
 ```js
 pinball.state();
 ```
@@ -183,6 +178,28 @@ pinball.state();
 * [Sinatra with Slim](https://github.com/primedia/pinball_wizard/wiki/Integrating-with-Sinatra)
 * [Optimizely](https://github.com/primedia/pinball_wizard/wiki/Integrating-a-Feature-with-Optimizely)
 * [ConFusion](https://github.com/primedia/pinball_wizard/wiki/Integrating-a-Feature-with-ConFusion)
+
+## Extra: Customize the Ruby Class
+
+By default, features are instances of `PinballWizard::Feature`. You can define your own class and register it according to a hash key. This is useful to disable features.
+
+```ruby
+module PinballWizard
+  class MyFeature < Feature
+    def determine_state
+      if my_condition?
+        disable "My Feature: My Reason"
+      end
+    end
+  end
+end
+
+PinballWizard::DSL.build do
+  class_patterns my_option: PinballWizard::MyFeature
+
+  feature :example, :my_option
+end
+```
 
 ## Tests
 

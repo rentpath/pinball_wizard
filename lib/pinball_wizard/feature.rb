@@ -1,47 +1,52 @@
-require 'pinball_wizard/helpers/string'
+require 'pinball_wizard/helpers/hash'
 
 module PinballWizard
-  module Feature
-    module ClassMethods
+  class Feature
+    attr_reader :name, :active, :options
+    attr_reader :disabled, :message
 
-      def available(value = true, &block)
-        @available = block.nil? ? proc { !!value } : block
-      end
+    def initialize(name, *options)
+      @name      = name.to_s
+      options    = Helpers::Hash.normalize_options(options)
+      @active    = ensure_callable(options.fetch(:active, false))
+      @options   = Helpers::Hash.without(options, :name, :active)
+      @disabled  = false
+    end
 
-      def available?
-        @available.call
-      end
+    alias_method :to_s, :name
 
-      def active_by_default(value = false, &block)
-        @active_by_default = block.nil? ? proc { !!value } : block
-      end
+    def active?
+      active.call
+    end
 
-      def active_by_default?
-        @active_by_default.call
-      end
+    def disabled?
+      determine_state # Called here for Registry#disabled?
+      disabled
+    end
 
-      def registry_name
-        Helpers::String.underscore(name).gsub('_feature','')
-      end
+    def disable(message = 'No reason given.')
+      @disabled = true
+      @message = message
+    end
 
-      def to_h
-        {
-          available:         available?,
-          active_by_default: active_by_default?
-        }
-      end
+    def determine_state
+      # noop: use defaults
+    end
 
-      alias_method :to_hash, :to_h
-
-      def set_defaults
-        available true
-        active_by_default false
+    def state
+      if disabled?
+        "disabled: #{message}"
+      elsif active?
+        'active'
+      else
+        'inactive'
       end
     end
 
-    def self.included(base)
-      base.extend(ClassMethods)
-      base.set_defaults
+    private
+
+    def ensure_callable(object)
+      object.respond_to?(:call) ? object : proc { object }
     end
   end
 end
