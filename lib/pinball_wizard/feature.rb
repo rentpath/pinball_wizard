@@ -19,19 +19,18 @@ module PinballWizard
       active.call
     end
 
-    # Allow the active proc to call #disable
-    def check_active_state
-      self.instance_eval(&active)
-    end
-
     def disabled?
-      check_active_state
+      determine_state # Called here for Registry#disabled?
       disabled
     end
 
     def disable(message = 'No reason given.')
       @disabled = true
       @message = message
+    end
+
+    def determine_state
+      # noop: use defaults
     end
 
     def state

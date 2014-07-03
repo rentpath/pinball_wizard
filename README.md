@@ -38,7 +38,7 @@ PinballWizard::DSL.build do
 end
 ```
 
-You can also pass in a proc for situtations where availability is conditional.
+You can also pass in a proc for situtations where active/inactive is conditional. Returning false with make the feature inactive.
 
 ```ruby
 PinballWizard::DSL.build do
@@ -186,11 +186,10 @@ By default, features are instances of `PinballWizard::Feature`. You can define y
 ```ruby
 module PinballWizard
   class MyFeature < Feature
-    def check_active_state
+    def determine_state
       if my_condition?
         disable "My Feature: My Reason"
       end
-      super
     end
   end
 end

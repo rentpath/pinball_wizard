@@ -1,4 +1,5 @@
 require 'pinball_wizard/helpers/hash'
+require 'pinball_wizard/null_feature'
 
 # Further Reading: https://practicingruby.com/articles/ruby-and-the-singleton-pattern-dont-get-along
 module PinballWizard
@@ -37,11 +38,7 @@ module PinballWizard
     private
 
     def null_feature
-      Feature.new('null_feature', {
-        active: proc do
-          disable 'Feature not found'
-        end
-      })
+      @null_feature ||= NullFeature.new 'null'
     end
   end
 end

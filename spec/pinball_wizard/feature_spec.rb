@@ -29,20 +29,6 @@ describe PinballWizard::Feature do
       it 'should be activate' do
         expect(subject.state).to eq('active')
       end
-
-      context 'is disabled in the proc' do
-        subject do
-          PinballWizard::Feature.new('example', {
-            active: proc do
-              disable "Reason"
-            end
-          })
-        end
-
-        it 'should be disabled' do
-          expect(subject.state).to eq('disabled: Reason')
-        end
-      end
     end
   end
 

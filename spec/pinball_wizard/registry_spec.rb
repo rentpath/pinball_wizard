@@ -10,12 +10,14 @@ describe PinballWizard::Registry do
     PinballWizard::Feature.new 'default'
   end
 
+  class DisabledFeature < PinballWizard::Feature
+    def determine_state
+      disable 'Reason'
+    end
+  end
+
   let(:disabled_feature) do
-    PinballWizard::Feature.new('disabled', {
-      active: proc do
-        disable 'Reason'
-      end
-    })
+    DisabledFeature.new 'disabled'
   end
 
   describe '.add' do
