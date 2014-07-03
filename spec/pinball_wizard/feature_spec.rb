@@ -30,6 +30,17 @@ describe PinballWizard::Feature do
         expect(subject.state).to eq('active')
       end
     end
+
+    context 'when disabled' do
+      subject do
+        PinballWizard::Feature.new 'example'
+      end
+
+      it 'should be disabled with a message' do
+        subject.disable 'reason'
+        expect(subject.state).to eq('disabled: reason')
+      end
+    end
   end
 
   describe '#active?' do
