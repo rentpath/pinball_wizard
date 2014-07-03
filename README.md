@@ -22,7 +22,7 @@ A feature is simply a name and a state:
 1. Define and register the feature in the [Ruby app](#ruby).
 2. Build the [JavaScript component](#javascript).
 3. Build the corresponding [HTML](#html) and [CSS](#css)
-4. Test by adding a `pinball` URL param. e.g. `?pinball=example`.
+4. [Activate and test your feature](#activating-and-testing-features).
 
 ## Ruby
 
@@ -179,7 +179,7 @@ pinball.state();
 * [Optimizely](https://github.com/primedia/pinball_wizard/wiki/Integrating-a-Feature-with-Optimizely)
 * [ConFusion](https://github.com/primedia/pinball_wizard/wiki/Integrating-a-Feature-with-ConFusion)
 
-## Extra: Customize te Ruby Class
+## Extra: Customize the Ruby Class
 
 By default, features are instances of `PinballWizard::Feature`. You can define your own class and register it according to a hash key. This is useful to disable features.
 
