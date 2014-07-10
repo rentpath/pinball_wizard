@@ -1,3 +1,4 @@
+require 'pinball_wizard/configuration'
 require 'pinball_wizard/feature'
 require 'pinball_wizard/registry'
 require 'pinball_wizard/dsl'

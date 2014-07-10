@@ -33,10 +33,12 @@ describe PinballWizard::DSL do
 
       class MyCustomFeature < PinballWizard::Feature; end
 
-      before(:each) do
-        PinballWizard::DSL.build do
-          class_patterns my_custom_feature: MyCustomFeature
+      let(:config) do
+        PinballWizard::Configuration.new my_custom_feature: MyCustomFeature
+      end
 
+      before(:each) do
+        PinballWizard::DSL.build(config) do
           feature :example_a, :my_custom_feature
           feature :example_b, :foo, my_custom_feature: { b: true }
           feature :example_c

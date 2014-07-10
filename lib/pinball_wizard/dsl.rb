@@ -2,17 +2,17 @@ require 'pinball_wizard/helpers/hash'
 
 module PinballWizard
   module DSL
-    def self.build(&block)
-      builder = Builder.new
+    def self.build(config = PinballWizard.configuration, &block)
+      builder = Builder.new(config)
       builder.instance_eval(&block)
       builder
     end
 
     class Builder
-      attr_reader :class_patterns_repo
+      attr_reader :config
 
-      def initialize
-        @class_patterns_repo = {}
+      def initialize(config)
+        @config = config
       end
 
       def feature(name, *options)
@@ -21,15 +21,17 @@ module PinballWizard
         Registry.add(feature)
       end
 
+      private
+
       def build_feature(name, options)
-        class_patterns_repo.each_pair do |key, klass|
-          return klass.new(name, options) if options.keys.include?(key)
-        end
-        Feature.new(name, options)
+        build_from_class_pattern(name, options) || Feature.new(name, options)
       end
 
-      def class_patterns(hash)
-        @class_patterns_repo = hash
+      def build_from_class_pattern(name, options)
+        config.class_patterns.each_pair do |key, klass|
+          return klass.new(name, options) if options.keys.include?(key)
+        end
+        false
       end
     end
   end
