@@ -82,19 +82,9 @@ describe PinballWizard::Feature do
   end
 
   describe '.new' do
-    it 'takes in an array of symbols and converts them to a hash' do
-      feature = PinballWizard::Feature.new 'example', :foo, :bar
-      expect(feature.options).to eq({ foo: true, bar: true })
-    end
-
     it 'takes a hash of options' do
       feature = PinballWizard::Feature.new 'example', foo: 'bar'
       expect(feature.options).to eq({ foo: 'bar' })
-    end
-
-    it 'merges an array of symbols and hash of options' do
-      feature = PinballWizard::Feature.new 'example', :a, :b, foo: 'bar'
-      expect(feature.options).to eq({ a: true, b: true, foo: 'bar' })
     end
   end
 end

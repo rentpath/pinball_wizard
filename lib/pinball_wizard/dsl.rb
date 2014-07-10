@@ -1,3 +1,5 @@
+require 'pinball_wizard/helpers/hash'
+
 module PinballWizard
   module DSL
     def self.build(&block)
@@ -14,15 +16,16 @@ module PinballWizard
       end
 
       def feature(name, *options)
-        feature = build_feature(name, *options)
+        options = Helpers::Hash.normalize_options(options)
+        feature = build_feature(name, options)
         Registry.add(feature)
       end
 
-      def build_feature(name, *options)
+      def build_feature(name, options)
         class_patterns_repo.each_pair do |key, klass|
-          return klass.new(name, *options) if options.include?(key)
+          return klass.new(name, options) if options.keys.include?(key)
         end
-        Feature.new(name, *options)
+        Feature.new(name, options)
       end
 
       def class_patterns(hash)
