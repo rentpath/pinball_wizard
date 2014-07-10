@@ -5,9 +5,9 @@ module PinballWizard
     attr_reader :name, :active, :options
     attr_reader :disabled, :message
 
-    def initialize(name, *options)
+    def initialize(name, options = {})
       @name      = name.to_s
-      options    = Helpers::Hash.normalize_options(options)
+      @options   = options
       @active    = ensure_callable(options.fetch(:active, false))
       @options   = Helpers::Hash.without(options, :name, :active)
       @disabled  = false
