@@ -184,6 +184,7 @@ pinball.state();
 By default, features are instances of `PinballWizard::Feature`. You can define your own class and register it according to a hash key. This is useful to disable features.
 
 ```ruby
+# e.g. app/features/my_feature.rb
 module PinballWizard
   class MyFeature < Feature
     def determine_state
@@ -194,9 +195,13 @@ module PinballWizard
   end
 end
 
-PinballWizard::DSL.build do
-  class_patterns my_option: PinballWizard::MyFeature
+# e.g. config/initializers/pinball_wizard.rb
+PinballWizard.configure do |c|
+  c.class_patterns = my_option: PinballWizard::MyFeature
+end
 
+# e.g. config/features.rb
+PinballWizard::DSL.build do
   feature :example, :my_option
 end
 ```
