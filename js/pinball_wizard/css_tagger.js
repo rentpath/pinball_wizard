@@ -35,7 +35,7 @@
         }
       }
       if (ele) {
-        ele.className += classNames.join(' ');
+        ele.className += ' ' + classNames.join(' ');
       }
     };
   });

@@ -1,6 +1,6 @@
 require ['css_tagger'], (tagger) ->
 
-  describe 'css_trigger', ->
+  describe 'css_tagger', ->
     it 'should add classes from the pinball async function queue', ->
       ele = document.createElement 'div'
       pinballQueue = [
@@ -8,12 +8,18 @@ require ['css_tagger'], (tagger) ->
       ]
 
       tagger ele, pinballQueue, ''
-      expect(ele.className).toEqual 'use-my-feature'
+      expect(ele.className).toEqual ' use-my-feature'
 
     it 'should add classes from query params', ->
       ele = document.createElement 'div'
       tagger ele, [], '?pinball=feature_a,feature_b&other=param'
-      expect(ele.className).toEqual 'use-feature-a use-feature-b'
+      expect(ele.className).toEqual ' use-feature-a use-feature-b'
+
+    it 'should not interfere with existing class names', ->
+      ele = document.createElement 'div'
+      ele.className = 'foo-bar'
+      tagger ele, [], '?pinball=feature_a,feature_b&other=param'
+      expect(ele.className).toEqual 'foo-bar use-feature-a use-feature-b'
 
     it 'should add classes from added pinball features', ->
       ele = document.createElement 'div'
@@ -27,7 +33,7 @@ require ['css_tagger'], (tagger) ->
       ]
 
       tagger ele, pinballQueue, ''
-      expect(ele.className).toEqual 'use-feature-a use-feature-c'
+      expect(ele.className).toEqual ' use-feature-a use-feature-c'
 
     it 'should add classes from queue and query params', ->
       ele = document.createElement 'div'
@@ -41,7 +47,7 @@ require ['css_tagger'], (tagger) ->
       ]
 
       tagger ele, pinballQueue, '?pinball=feature_c'
-      expect(ele.className).toEqual 'use-feature-a use-feature-b use-feature-c'
+      expect(ele.className).toEqual ' use-feature-a use-feature-b use-feature-c'
 
   # Jasmine 2.0 Works on window.onload and doesn't play well with requirejs
   jasmine.getEnv().execute()

@@ -39,6 +39,6 @@ define ->
       for feature in featureNames
         add feature
 
-    ele.className += classNames.join(' ') if ele
+    ele.className += ' ' + classNames.join(' ') if ele
 
     return
