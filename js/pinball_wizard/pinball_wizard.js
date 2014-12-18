@@ -4,7 +4,7 @@
   var __slice = [].slice;
 
   define(function() {
-    var activate, add, deactivate, debug, exports, features, get, isActive, logPrefix, push, reset, showLog, state, subscribe, subscribers, update, urlPrefix, urlValues, _buildSubscriber, _log, _notifySubscriberOnActivate, _notifySubscribersOnActivate, _notifySubscribersOnDeactivate, _urlKeyMatches, _urlValueMatches, _urlValues;
+    var activate, add, deactivate, debug, exports, features, get, isActive, logPrefix, push, reset, showLog, state, subscribe, subscribers, update, urlPrefix, urlValues, _buildSubscriber, _log, _notifySubscriberOnActivate, _notifySubscribersOnActivate, _notifySubscribersOnDeactivate, _urlValueMatches, _urlValues;
     features = {};
     subscribers = {};
     urlPrefix = 'pinball_';
@@ -47,9 +47,6 @@
       }
       return _results;
     };
-    _urlKeyMatches = function(name) {
-      return window.location.search.indexOf("" + urlPrefix + name) !== -1;
-    };
     _urlValueMatches = function(value) {
       var v, _i, _len, _ref;
       _ref = _urlValues();
@@ -86,7 +83,7 @@
         _log("Added %s: %s.", name, state);
         if (isActive(name)) {
           _results.push(activate(name, "automatic. added as '" + state + "'"));
-        } else if (_urlKeyMatches(name) || _urlValueMatches(name, urlValues)) {
+        } else if (_urlValueMatches(name, urlValues)) {
           _results.push(activate(name, 'URL'));
         } else {
           _results.push(void 0);

@@ -1,7 +1,6 @@
 require 'pinball_wizard'
 
 describe PinballWizard::Feature do
-
   describe '#state' do
     context 'with defaults' do
       subject { PinballWizard::Feature.new 'example' }

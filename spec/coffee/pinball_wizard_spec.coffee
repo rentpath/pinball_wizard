@@ -31,31 +31,6 @@ require ['pinball_wizard'], (pinball) ->
         a: 'disabled: reason'
       expect(pinball.isActive('a')).toEqual(false)
 
-    describe 'with a ?pinball_feature url param', ->
-
-      originalPathname = null
-
-      beforeEach ->
-        originalPathname = window.location.pathname
-
-      afterEach ->
-        window.history.replaceState(null, null, originalPathname)
-
-      it 'is not active when mismatched', ->
-        urlParam = '?pinball_foo'
-        window.history.replaceState(null, null, window.location.pathname + urlParam)
-        pinball.add
-          a: 'inactive'
-        expect(pinball.isActive('a')).toEqual(false)
-
-      it 'is active when matching', ->
-        urlParam = '?pinball_a'
-        # Mock a different url
-        window.history.replaceState(null, null, window.location.pathname + urlParam)
-        pinball.add
-          a: 'inactive'
-        expect(pinball.isActive('a')).toEqual(true)
-
     describe 'with a ?pinball=feature,feature url param', ->
 
       originalPathname = null

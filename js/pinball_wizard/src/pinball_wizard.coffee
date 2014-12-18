@@ -5,7 +5,6 @@ define ->
   features = {}
   subscribers = {}
 
-  urlPrefix = 'pinball_'
   showLog = false
   logPrefix = '[PinballWizard]'
 
@@ -27,10 +26,6 @@ define ->
     subscribers[name] ?= []
     for subscriber in subscribers[name]
       subscriber.onDeactivate()
-
-  # Original ?pinball_name Version
-  _urlKeyMatches = (name) ->
-    window.location.search.indexOf("#{urlPrefix}#{name}") != -1
 
   # Support ?pinball=name1,name2,debug
   _urlValueMatches = (value) ->
@@ -54,7 +49,7 @@ define ->
 
       if isActive(name)
         activate(name, "automatic. added as '#{state}'")
-      else if _urlKeyMatches(name) or _urlValueMatches(name, urlValues)
+      else if _urlValueMatches(name, urlValues)
         activate(name, 'URL')
 
   get = (name) ->

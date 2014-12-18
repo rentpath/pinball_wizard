@@ -38,34 +38,6 @@
         });
         return expect(pinball.isActive('a')).toEqual(false);
       });
-      describe('with a ?pinball_feature url param', function() {
-        var originalPathname;
-        originalPathname = null;
-        beforeEach(function() {
-          return originalPathname = window.location.pathname;
-        });
-        afterEach(function() {
-          return window.history.replaceState(null, null, originalPathname);
-        });
-        it('is not active when mismatched', function() {
-          var urlParam;
-          urlParam = '?pinball_foo';
-          window.history.replaceState(null, null, window.location.pathname + urlParam);
-          pinball.add({
-            a: 'inactive'
-          });
-          return expect(pinball.isActive('a')).toEqual(false);
-        });
-        return it('is active when matching', function() {
-          var urlParam;
-          urlParam = '?pinball_a';
-          window.history.replaceState(null, null, window.location.pathname + urlParam);
-          pinball.add({
-            a: 'inactive'
-          });
-          return expect(pinball.isActive('a')).toEqual(true);
-        });
-      });
       return describe('with a ?pinball=feature,feature url param', function() {
         var originalPathname;
         originalPathname = null;
