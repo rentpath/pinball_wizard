@@ -234,4 +234,4 @@ To compile the CoffeeScript and run Jasmine, start foreman: `foreman start`.
 
 ## License
 
-TBD
+[MIT](https://github.com/primedia/pinball_wizard/blob/master/LICENSE)

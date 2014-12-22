@@ -3,6 +3,7 @@
   "version": "0.2.0",
   "description": "pinball_wizard",
   "homepage": "https://github.com/primedia/pinball_wizard",
+  "license": "MIT",
 
   "author": {
     "name": "RentPath"
@@ -17,4 +18,3 @@
 
   "github": "https://github.com/primedia/pinball_wizard.git"
 }
-
