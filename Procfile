@@ -1,3 +1,3 @@
-src: coffee -cwm -o js/pinball_wizard js/pinball_wizard/src
+src: coffee -cwm -o dist src
 spec: coffee -cwm -o spec/javascripts spec/coffee
 jasmine: rake jasmine

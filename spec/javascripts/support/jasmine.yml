@@ -26,7 +26,6 @@ src_files:
 #   - stylesheets/*.css
 #
 stylesheets:
-  - vendor/jam/**/*.css
 
 # helpers
 #

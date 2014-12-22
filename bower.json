@@ -1,7 +1,7 @@
 {
   "name": "pinball_wizard",
   "version": "0.2.0",
-  "main": "js/pinball_wizard/pinball_wizard.js",
+  "main": "dist/pinball_wizard.js",
   "dependencies": {
   },
   "devDependencies": {
