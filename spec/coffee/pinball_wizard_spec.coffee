@@ -232,6 +232,29 @@ require ['pinball_wizard'], (pinball) ->
       pinball.push ['activate','my-feature']
       expect(pinball.activate).toHaveBeenCalledWith('my-feature')
 
+  describe '#cssClassName', ->
+    it 'builds the name with the prefix', ->
+      expect(pinball.cssClassName('my_feature')).toEqual 'use-my-feature'
+
+  describe '#addCSSClassName', ->
+    it 'appends', ->
+      ele = document.createElement 'div'
+      pinball.addCSSClassName('my_feature', ele)
+      expect(ele.className).toEqual ' use-my-feature'
+
+    it 'does not append twice', ->
+      ele = document.createElement 'div'
+      pinball.addCSSClassName('my_feature', ele)
+      pinball.addCSSClassName('my_feature', ele)
+      expect(ele.className).toEqual ' use-my-feature'
+
+  describe '#removeCSSClassName', ->
+    it 'removes it', ->
+      ele = document.createElement 'div'
+      pinball.addCSSClassName('my_feature', ele)
+      pinball.removeCSSClassName('my_feature', ele)
+      expect(ele.className).toEqual ''
+
   describe '#_urlValues', ->
     it 'pulls out the parts', ->
       urlParam = '?pinball=a,b'

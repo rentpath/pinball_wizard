@@ -268,6 +268,35 @@
         return expect(pinball.activate).toHaveBeenCalledWith('my-feature');
       });
     });
+    describe('#cssClassName', function() {
+      return it('builds the name with the prefix', function() {
+        return expect(pinball.cssClassName('my_feature')).toEqual('use-my-feature');
+      });
+    });
+    describe('#addCSSClassName', function() {
+      it('appends', function() {
+        var ele;
+        ele = document.createElement('div');
+        pinball.addCSSClassName('my_feature', ele);
+        return expect(ele.className).toEqual(' use-my-feature');
+      });
+      return it('does not append twice', function() {
+        var ele;
+        ele = document.createElement('div');
+        pinball.addCSSClassName('my_feature', ele);
+        pinball.addCSSClassName('my_feature', ele);
+        return expect(ele.className).toEqual(' use-my-feature');
+      });
+    });
+    describe('#removeCSSClassName', function() {
+      return it('removes it', function() {
+        var ele;
+        ele = document.createElement('div');
+        pinball.addCSSClassName('my_feature', ele);
+        pinball.removeCSSClassName('my_feature', ele);
+        return expect(ele.className).toEqual('');
+      });
+    });
     describe('#_urlValues', function() {
       it('pulls out the parts', function() {
         var urlParam;

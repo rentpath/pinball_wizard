@@ -42,6 +42,19 @@ define ->
     []
   urlValues = _urlValues() # Memoize
 
+  cssClassName = (name, prefix = 'use-') ->
+    prefix + name.split('_').join('-')
+
+  addCSSClassName = (name, ele = document.documentElement) ->
+    cN = cssClassName(name)
+    if ele.className.indexOf(cN) < 0
+      ele.className += ' ' + cN
+
+  removeCSSClassName = (name, ele = document.documentElement) ->
+    cN = cssClassName(name)
+    if ele.className.indexOf(cN) >= 0
+      ele.className = ele.className.replace cN, ''
+
   add = (list) ->
     for name, state of list
       features[name] = state
@@ -67,6 +80,7 @@ define ->
       when 'inactive'
         _log "Activate %s%s.", name, source
         update(name, 'active')
+        addCSSClassName(name)
         _notifySubscribersOnActivate(name)
       when 'active'
         _log "Attempted to activate %s, but it is already active%s.", name, source
@@ -82,6 +96,7 @@ define ->
       when 'active'
         _log "Dectivate %s%s.", name, source
         update(name, 'inactive')
+        removeCSSClassName(name)
         _notifySubscribersOnDeactivate(name)
       else
         _log "Attempted to deactivate %s, but it is %s%s.", name, state, source
@@ -115,18 +130,22 @@ define ->
     showLog = true
 
   # Exports
-  exports =
-    add:          add
-    get:          get
-    activate:     activate
-    deactivate:   deactivate
-    isActive:     isActive
-    subscribe:    subscribe
-    push:         push
-    state:        state
-    reset:        reset
-    debug:        debug
-    _urlValues:  _urlValues
+  exports = {
+    add
+    get
+    activate
+    deactivate
+    isActive
+    subscribe
+    push
+    state
+    reset
+    debug
+    cssClassName
+    addCSSClassName
+    removeCSSClassName
+    _urlValues
+  }
 
   # Initialize
   if window?.pinball
