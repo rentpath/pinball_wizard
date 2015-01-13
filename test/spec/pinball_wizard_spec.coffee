@@ -1,7 +1,6 @@
-require ['pinball_wizard'], (pinball) ->
+define ['pinball_wizard'], (pinball) ->
 
   beforeEach ->
-    pinball.debug()
     pinball.reset()
 
   describe 'initialize', ->
@@ -267,6 +266,3 @@ require ['pinball_wizard'], (pinball) ->
     it 'works with other keys/values', ->
       urlParam = '?foo=bar&pinball=a,b&bar'
       expect(pinball._urlValues(urlParam)).toEqual(['a','b'])
-
-  # Jasmine 2.0 Works on window.onload and doesn't play well with requirejs
-  jasmine.getEnv().execute()

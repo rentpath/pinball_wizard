@@ -4,17 +4,42 @@
   "description": "pinball_wizard",
   "homepage": "https://github.com/primedia/pinball_wizard",
   "license": "MIT",
-
   "author": {
     "name": "RentPath"
   },
-
-  "repositories": [
-    {
-      "type": "git",
-      "url": "https://github.com/primedia/pinball_wizard.git"
-    }
-  ],
-
-  "github": "https://github.com/primedia/pinball_wizard.git"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/primedia/pinball_wizard.git"
+  },
+  "github": "https://github.com/primedia/pinball_wizard.git",
+  "devDependencies": {
+    "del": "^1.1.0",
+    "gulp": "^3.8.10",
+    "gulp-coffee": "^2.2.0",
+    "gulp-sourcemaps": "~1.2.0",
+    "gulp-util": "^3.0.1",
+    "karma": "~0.12.31",
+    "karma-jasmine": "~0.3.4",
+    "karma-cli": "0.0.4",
+    "karma-chrome-launcher": "~0.1.7",
+    "requirejs": "~2.1.15",
+    "karma-requirejs": "~0.2.2",
+    "gulp": "~3.8.10"
+  },
+  "scripts": {
+    "compile": "gulp build",
+    "build": "gulp dist",
+    "livereload": "gulp",
+    "watch": "gulp",
+    "watch:test": "karma start",
+    "test": "karma start --single-run",
+    "test:clean": "npm run clean && npm run compile && npm test",
+    "clean": "rm -rf .tmp",
+    "preclean:all": "npm run clean",
+    "clean:all": "rm -rf node_modules",
+    "prereset": "npm run clean:all",
+    "reset": "npm install",
+    "postreset": "npm run compile",
+    "preversion": "npm run reset && npm test && npm run build"
+  }
 }

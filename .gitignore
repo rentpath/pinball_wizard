@@ -2,3 +2,8 @@
 .rvmrc
 vendor/ruby
 .bundle
+.DS_Store
+node_modules
+.tmp/
+npm-debug.log
+pkg
