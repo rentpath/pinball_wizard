@@ -9,8 +9,6 @@ Object.keys(window.__karma__.files).forEach (file) ->
   allTestFiles.push pathToModule(file)  if TEST_REGEXP.test(file)
   return
 
-console.log allTestFiles
-
 require.config
   # Karma serves files under /base, which is the basePath from your config file
   baseUrl: '/base'
