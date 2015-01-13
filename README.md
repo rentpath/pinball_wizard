@@ -181,7 +181,8 @@ pinball.state();
 * [Rails](https://github.com/primedia/pinball_wizard/wiki/Integrating-with-Rails)
 * [Sinatra with Slim](https://github.com/primedia/pinball_wizard/wiki/Integrating-with-Sinatra)
 * [Optimizely](https://github.com/primedia/pinball_wizard/wiki/Integrating-a-Feature-with-Optimizely)
-* [ConFusion](https://github.com/primedia/pinball_wizard/wiki/Integrating-a-Feature-with-ConFusion)
+
+For RentPath specific functionality, including ConFusion, see [pinball_wizard-rentpath](https://github.com/primedia/pinball_wizard-rentpath)
 
 ## Extra: Customize the Ruby Class
 
