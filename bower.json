@@ -4,12 +4,11 @@
   "main": "dist/pinball_wizard.js",
   "dependencies": {
   },
-  "devDependencies": {
-    "requirejs": null
-  },
+  "devDependencies": {},
   "ignore": [
     "spec/**.*",
     "package.json",
-    "README.md"
+    "README.md",
+    "lib"
   ]
 }
