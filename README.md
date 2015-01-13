@@ -64,12 +64,16 @@ If the feature is not active immediately, it's recommended to hide the HTML with
 
 ## CSS
 
-PinballWizard doesn't have any CSS specific helpers, but recommends a convention similar to the Ruby version:
+PinballWizard automatically adds and removes a CSS class named `.use-{feature-name}` to the `<html>` tag. This allows you to write CSS when features are active.
+
+It is also recommended to organize your CSS similar to Ruby:
 
 ```scss
-// public/scss/features/_example.scss
+// app/assets/stylesheets/features/_example.scss
 
-#example {}
+.use-example {
+  // CSS when the 'example' feature is active.
+}
 ```
 
 Then include it on the main file with `@import 'features/example'`
@@ -206,9 +210,110 @@ PinballWizard::DSL.build do
 end
 ```
 
-## Tests
+## Getting started for development.
+```
+git checkout dev
+git pull origin dev
+git checkout -b my_branch
+npm run preversion
+```
 
-Both `rspec` and `jasmine` can be run with the `rspec` and `rake jasmine` commands.
+## A basic red-green-refactor workflow.
+
+```
+npm install
+npm run watch
+npm run watch:test # in another terminal window or pane
+```
+
+## Examples of common tasks.
+
+npm script commands are defined in the scripts section of package.json.
+To see a full list of available npm commands, run:
+
+```
+npm run
+```
+
+### Install NPM Dependencies
+
+```
+npm install
+```
+
+### One-time compile of application source and tests.
+
+```
+npm run compile
+```
+
+### Compile application source & tests and build the distribution as files change.
+
+```
+npm run watch
+```
+
+### Running Tests.
+
+One time.
+
+```
+npm test
+```
+
+Watch continuously and run tests when code or specs change.
+
+```
+npm run watch:test
+```
+
+### Cleaning
+
+Remove compiled code and tests in .tmp/.
+
+```
+npm run clean
+```
+
+Remove compiled code and tests, `node_modules`
+
+```
+npm run clean:all
+```
+
+Remove compiled code, tests, `node_modules`; reinstall
+node modules; recompile code and tests.
+
+```
+npm run reset
+```
+
+### Building a Distribution
+
+To build a distribution and tag it, run one of the following commands.
+
+```
+npm version patch -m "Bumped to %s"
+npm version minor -m "Bumped to %s"
+npm version major -m "Bumped to %s"
+```
+
+There's a 'preversion' script in package.json that does the following:
+  - Remove the .tmp/ directory.
+  - Remove the node_modules directories.
+  - Install all npm packages.
+  - Compile the application source and specs.
+  - Run the tests.
+  - Rebuild the distribution.
+
+Just build a distribution.
+
+```
+npm run build
+```
+
+## Notes
+  - The `dist/` directory must be part of the repo - don't gitignore it!
 
 
 ## Contributing
@@ -217,14 +322,11 @@ This is a [README driven development](http://tom.preston-werner.com/2010/08/23/r
 
 To compile the CoffeeScript and run Jasmine, start foreman: `foreman start`.
 
-## Next
-
-- Handle reverse/opposite features. e.g. when optimizely activates a new search UI, it should deactivate the previous one.
-
 ## Future Versions
 
 - Build a UI panel that shows the status of each feature. Allow
   toggling. Ship it as a bookmarklet or Chrome developer tools panel.
+
 
 ## Credits
 
