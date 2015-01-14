@@ -1,7 +1,6 @@
-require ['pinball_wizard'], (pinball) ->
+define ['pinball_wizard'], (pinball) ->
 
   beforeEach ->
-    pinball.debug()
     pinball.reset()
 
   describe 'initialize', ->
@@ -30,31 +29,6 @@ require ['pinball_wizard'], (pinball) ->
       pinball.add
         a: 'disabled: reason'
       expect(pinball.isActive('a')).toEqual(false)
-
-    describe 'with a ?pinball_feature url param', ->
-
-      originalPathname = null
-
-      beforeEach ->
-        originalPathname = window.location.pathname
-
-      afterEach ->
-        window.history.replaceState(null, null, originalPathname)
-
-      it 'is not active when mismatched', ->
-        urlParam = '?pinball_foo'
-        window.history.replaceState(null, null, window.location.pathname + urlParam)
-        pinball.add
-          a: 'inactive'
-        expect(pinball.isActive('a')).toEqual(false)
-
-      it 'is active when matching', ->
-        urlParam = '?pinball_a'
-        # Mock a different url
-        window.history.replaceState(null, null, window.location.pathname + urlParam)
-        pinball.add
-          a: 'inactive'
-        expect(pinball.isActive('a')).toEqual(true)
 
     describe 'with a ?pinball=feature,feature url param', ->
 
@@ -257,6 +231,29 @@ require ['pinball_wizard'], (pinball) ->
       pinball.push ['activate','my-feature']
       expect(pinball.activate).toHaveBeenCalledWith('my-feature')
 
+  describe '#cssClassName', ->
+    it 'builds the name with the prefix', ->
+      expect(pinball.cssClassName('my_feature')).toEqual 'use-my-feature'
+
+  describe '#addCSSClassName', ->
+    it 'appends', ->
+      ele = document.createElement 'div'
+      pinball.addCSSClassName('my_feature', ele)
+      expect(ele.className).toEqual ' use-my-feature'
+
+    it 'does not append twice', ->
+      ele = document.createElement 'div'
+      pinball.addCSSClassName('my_feature', ele)
+      pinball.addCSSClassName('my_feature', ele)
+      expect(ele.className).toEqual ' use-my-feature'
+
+  describe '#removeCSSClassName', ->
+    it 'removes it', ->
+      ele = document.createElement 'div'
+      pinball.addCSSClassName('my_feature', ele)
+      pinball.removeCSSClassName('my_feature', ele)
+      expect(ele.className).toEqual ''
+
   describe '#_urlValues', ->
     it 'pulls out the parts', ->
       urlParam = '?pinball=a,b'
@@ -269,6 +266,3 @@ require ['pinball_wizard'], (pinball) ->
     it 'works with other keys/values', ->
       urlParam = '?foo=bar&pinball=a,b&bar'
       expect(pinball._urlValues(urlParam)).toEqual(['a','b'])
-
-  # Jasmine 2.0 Works on window.onload and doesn't play well with requirejs
-  jasmine.getEnv().execute()

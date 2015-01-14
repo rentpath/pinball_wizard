@@ -9,6 +9,7 @@ Gem::Specification.new do |gem|
   gem.description   = 'Build flippable features.'
   gem.summary       = "Lib to build flippable features."
   gem.date          = Date.today.to_s
+  gem.licenses      = ['MIT']
   gem.executables   = []
   gem.files         = `git ls-files | grep -v myapp`.split("\n")
   gem.test_files    = `git ls-files -- test/*`.split("\n")

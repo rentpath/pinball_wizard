@@ -1,4 +1,4 @@
-require ['css_tagger'], (tagger) ->
+define ['css_tagger'], (tagger) ->
 
   describe 'css_tagger', ->
     it 'should add classes from the pinball async function queue', ->
@@ -48,6 +48,3 @@ require ['css_tagger'], (tagger) ->
 
       tagger ele, pinballQueue, '?pinball=feature_c'
       expect(ele.className).toEqual ' use-feature-a use-feature-b use-feature-c'
-
-  # Jasmine 2.0 Works on window.onload and doesn't play well with requirejs
-  jasmine.getEnv().execute()
