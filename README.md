@@ -2,16 +2,19 @@
 
 <img src="http://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Pinball_Flippers_-_Demolition_Man.JPG/1024px-Pinball_Flippers_-_Demolition_Man.JPG" width="100%">
 
-[PinballWizard](https://www.youtube.com/watch?v=DthtDjhqVOU) brings feature flipping into a simple and uniform API.
+[<img src="http://img.youtube.com/vi/DthtDjhqVOU/1.jpg" height="40"> The Who & Elton John - Pinball Wizard (Tommy 1975)](https://www.youtube.com/watch?v=DthtDjhqVOU)
 
-[![The real pinball wizard](http://img.youtube.com/vi/DthtDjhqVOU/1.jpg)](https://www.youtube.com/watch?v=DthtDjhqVOU)
-[Pinball Wizard ft. Sir Elton John](https://www.youtube.com/watch?v=DthtDjhqVOU)
+`PinballWizard` brings feature flipping into a simple and uniform API in both client-side JavaScript and Ruby.
+
+## Why?
+
+PinballWizard is intended to work with heavily cached pages (e.g. Varnish) that need feature flipping. It works well with third parties such as [Optimizely](http://optimizely.com/) where flipping occurs after HTML is rendered.
 
 ## What is a *feature*?
 
 A set of Ruby, HTML, JavaScript, and CSS that can be turned on or off.
 
-A feature is simply a name and a state:
+A feature is simply a name and default state:
 
 * *active*: If it is currently turned on and running.
 * *inactive*: Not turned on.
@@ -21,7 +24,7 @@ A feature is simply a name and a state:
 ## Building
 1. Define and register the feature in the [Ruby app](#ruby).
 2. Build the [JavaScript component](#javascript).
-3. Build the corresponding [HTML](#html) and [CSS](#css)
+3. Write the corresponding [HTML](#html) and [CSS](#css)
 4. [Activate and test your feature](#activating-and-testing-features).
 
 ## Ruby
@@ -184,7 +187,7 @@ pinball.state();
 
 For RentPath specific functionality, including ConFusion, see [pinball_wizard-rentpath](https://github.com/primedia/pinball_wizard-rentpath)
 
-## Extra: Customize the Ruby Class
+## Extra: Custom Ruby Class
 
 By default, features are instances of `PinballWizard::Feature`. You can define your own class and register it according to a hash key. This is useful to disable features.
 
@@ -319,14 +322,7 @@ npm run build
 
 ## Contributing
 
-This is a [README driven development](http://tom.preston-werner.com/2010/08/23/readme-driven-development.html) process, please contribute by modifying this document. Code will come later.
-
-To compile the CoffeeScript and run Jasmine, start foreman: `foreman start`.
-
-## Future Versions
-
-- Build a UI panel that shows the status of each feature. Allow
-  toggling. Ship it as a bookmarklet or Chrome developer tools panel.
+Fork and submit a pull request. This is a [README driven development](http://tom.preston-werner.com/2010/08/23/readme-driven-development.html) process, please contribute by modifying this document.
 
 
 ## Credits
