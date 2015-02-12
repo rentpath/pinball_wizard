@@ -29,7 +29,7 @@ A feature is simply a name and default state:
 
 ## Ruby
 
-Define your feature in (typically `config/initializers/pinball_wizard.rb`).
+Define your feature (typically in `config/initializers/pinball_wizard.rb`).
 
 ```ruby
 PinballWizard::DSL.build do
@@ -41,7 +41,7 @@ PinballWizard::DSL.build do
 end
 ```
 
-You can also pass in a proc for situtations where active/inactive is conditional. Returning false with make the feature inactive.
+You can also pass in a proc for situtations where active/inactive is conditional. Returning false will make the feature inactive.
 
 ```ruby
 PinballWizard::DSL.build do
@@ -113,9 +113,9 @@ define ['pinball_wizard'], (pinball) ->
 
   @after 'initialize', ->
     pinball.subscribe 'example',
-      =>
+      ->
         # callback when activated. e.g. show it
-      =>
+      ->
         # callback when deactivated. e.g. hide it.
 
 ```
