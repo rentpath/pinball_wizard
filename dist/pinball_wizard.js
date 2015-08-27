@@ -1,55 +1,55 @@
 (function() {
   'use strict';
-  var __slice = [].slice;
+  var slice = [].slice;
 
   define(function() {
-    var activate, add, addCSSClassName, cssClassName, deactivate, debug, exports, features, get, isActive, logPrefix, push, removeCSSClassName, reset, showLog, state, subscribe, subscribers, update, urlValues, _buildSubscriber, _log, _notifySubscriberOnActivate, _notifySubscribersOnActivate, _notifySubscribersOnDeactivate, _urlValueMatches, _urlValues;
+    var _buildSubscriber, _log, _notifySubscriberOnActivate, _notifySubscribersOnActivate, _notifySubscribersOnDeactivate, _urlValueMatches, _urlValues, activate, add, addCSSClassName, addFlipper, cssClassName, deactivate, debug, exports, features, get, isActive, logPrefix, push, removeCSSClassName, reset, showLog, state, subscribe, subscribers, toggle, update, urlValues;
     features = {};
     subscribers = {};
     showLog = false;
     logPrefix = '[PinballWizard]';
     _log = function() {
       var args, message;
-      message = arguments[0], args = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
+      message = arguments[0], args = 2 <= arguments.length ? slice.call(arguments, 1) : [];
       if (showLog && window.console && window.console.log) {
-        console.log.apply(console, ["" + logPrefix + " " + message].concat(__slice.call(args)));
+        console.log.apply(console, [logPrefix + " " + message].concat(slice.call(args)));
       }
     };
     _notifySubscribersOnActivate = function(name) {
-      var subscriber, _i, _len, _ref, _results;
+      var i, len, ref, results, subscriber;
       if (subscribers[name] == null) {
         subscribers[name] = [];
       }
-      _ref = subscribers[name];
-      _results = [];
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        subscriber = _ref[_i];
-        _results.push(_notifySubscriberOnActivate(subscriber, name));
+      ref = subscribers[name];
+      results = [];
+      for (i = 0, len = ref.length; i < len; i++) {
+        subscriber = ref[i];
+        results.push(_notifySubscriberOnActivate(subscriber, name));
       }
-      return _results;
+      return results;
     };
     _notifySubscriberOnActivate = function(subscriber, name) {
       _log('Notify subscriber that %s is active', name);
       return subscriber.onActivate();
     };
     _notifySubscribersOnDeactivate = function(name) {
-      var subscriber, _i, _len, _ref, _results;
+      var i, len, ref, results, subscriber;
       if (subscribers[name] == null) {
         subscribers[name] = [];
       }
-      _ref = subscribers[name];
-      _results = [];
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        subscriber = _ref[_i];
-        _results.push(subscriber.onDeactivate());
+      ref = subscribers[name];
+      results = [];
+      for (i = 0, len = ref.length; i < len; i++) {
+        subscriber = ref[i];
+        results.push(subscriber.onDeactivate());
       }
-      return _results;
+      return results;
     };
     _urlValueMatches = function(value) {
-      var v, _i, _len, _ref;
-      _ref = _urlValues();
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        v = _ref[_i];
+      var i, len, ref, v;
+      ref = _urlValues();
+      for (i = 0, len = ref.length; i < len; i++) {
+        v = ref[i];
         if (value === v) {
           return true;
         }
@@ -57,14 +57,14 @@
       return false;
     };
     _urlValues = function(search) {
-      var key, pair, pairs, value, _i, _len, _ref;
+      var i, key, len, pair, pairs, ref, value;
       if (search == null) {
         search = window.location.search;
       }
       pairs = search.substr(1).split('&');
-      for (_i = 0, _len = pairs.length; _i < _len; _i++) {
-        pair = pairs[_i];
-        _ref = pair.split('='), key = _ref[0], value = _ref[1];
+      for (i = 0, len = pairs.length; i < len; i++) {
+        pair = pairs[i];
+        ref = pair.split('='), key = ref[0], value = ref[1];
         if (key === 'pinball' && (value != null)) {
           return value.split(',');
         }
@@ -99,21 +99,21 @@
       }
     };
     add = function(list) {
-      var name, state, _results;
-      _results = [];
+      var name, results, state;
+      results = [];
       for (name in list) {
         state = list[name];
         features[name] = state;
         _log("Added %s: %s.", name, state);
         if (isActive(name)) {
-          _results.push(activate(name, "automatic. added as '" + state + "'"));
+          results.push(activate(name, "automatic. added as '" + state + "'"));
         } else if (_urlValueMatches(name, urlValues)) {
-          _results.push(activate(name, 'URL'));
+          results.push(activate(name, 'URL'));
         } else {
-          _results.push(void 0);
+          results.push(void 0);
         }
       }
-      return _results;
+      return results;
     };
     get = function(name) {
       return features[name];
@@ -161,6 +161,16 @@
           return _log("Attempted to deactivate %s, but it is %s%s.", name, state, source);
       }
     };
+    toggle = function(name, element) {
+      if (isActive(name)) {
+        deactivate(name);
+        element.innerHTML = "(+)";
+      } else {
+        activate(name);
+        element.innerHTML = "(-)";
+      }
+      return false;
+    };
     isActive = function(name) {
       return get(name) === 'active';
     };
@@ -196,11 +206,36 @@
     debug = function() {
       return showLog = true;
     };
+    addFlipper = function() {
+      var feature, flipperDiv, flipperHTML, i, len, linkText, ref, toggledText;
+      flipperDiv = document.createElement("iframe");
+      flipperHTML = "<h3>Available Features:</h3><ul>";
+      ref = Object.keys(features);
+      for (i = 0, len = ref.length; i < len; i++) {
+        feature = ref[i];
+        if (isActive(feature)) {
+          linkText = "-";
+        } else {
+          linkText = "+";
+        }
+        if (isActive(feature)) {
+          toggledText = "(+)";
+        } else {
+          toggledText = "(-)";
+        }
+        flipperHTML += "<li>" + feature + "&nbsp;<a href='javascript:void(0);' onclick=parent.pinball.toggle('" + feature + "',this);>(" + linkText + ")</a></li>";
+      }
+      flipperHTML += "</ul>";
+      flipperDiv.srcdoc = flipperHTML;
+      flipperDiv.style.cssText = "position:fixed;top:0;left:0;width:300px;height:250px;background:white;font-size:12pt;z-index:99999;";
+      return document.getElementsByTagName('body')[0].appendChild(flipperDiv);
+    };
     exports = {
       add: add,
       get: get,
       activate: activate,
       deactivate: deactivate,
+      toggle: toggle,
       isActive: isActive,
       subscribe: subscribe,
       push: push,
@@ -220,6 +255,9 @@
         exports.push(window.pinball.shift());
       }
       window.pinball = exports;
+      if (_urlValueMatches('debug')) {
+        addFlipper();
+      }
     }
     return exports;
   });

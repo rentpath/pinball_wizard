@@ -101,6 +101,15 @@ define ->
       else
         _log "Attempted to deactivate %s, but it is %s%s.", name, state, source
 
+  toggle = (name, element) ->
+    if isActive(name)
+      deactivate(name)
+      element.innerHTML = "(+)"
+    else
+      activate(name)
+      element.innerHTML = "(-)"
+    false
+
   isActive = (name) ->
     get(name) == 'active'
 
@@ -129,12 +138,26 @@ define ->
   debug = ->
     showLog = true
 
+  # TODO - move this code into flipper.coffee
+  addFlipper = ->
+    flipperDiv = document.createElement("iframe")
+    flipperHTML = "<h3>Available Features:</h3><ul>"
+    for feature in Object.keys(features)
+      if isActive(feature) then linkText = "-" else linkText = "+"
+      if isActive(feature) then toggledText = "(+)" else toggledText = "(-)"
+      flipperHTML += "<li>#{feature}&nbsp;<a href='javascript:void(0);' onclick=parent.pinball.toggle('#{feature}',this);>(#{linkText})</a></li>"
+    flipperHTML += "</ul>"
+    flipperDiv.srcdoc = flipperHTML
+    flipperDiv.style.cssText = "position:fixed;top:0;left:0;width:300px;height:250px;background:white;font-size:12pt;z-index:99999;"
+    document.getElementsByTagName('body')[0].appendChild(flipperDiv)
+
   # Exports
   exports = {
     add
     get
     activate
     deactivate
+    toggle
     isActive
     subscribe
     push
@@ -153,5 +176,6 @@ define ->
     while window.pinball.length
       exports.push window.pinball.shift()
     window.pinball = exports
+    addFlipper() if _urlValueMatches('debug')
 
   exports
