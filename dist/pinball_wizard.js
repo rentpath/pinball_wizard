@@ -227,7 +227,7 @@
       }
       flipperHTML += "</ul>";
       flipperDiv.srcdoc = flipperHTML;
-      flipperDiv.style.cssText = "position:fixed;top:0;left:0;width:300px;height:250px;background:white;font-size:12pt;z-index:99999;";
+      flipperDiv.style.cssText = "position:fixed;top:0;left:0;width:300px;height:250px;background:white;opacity:.9;font-size:12pt;z-index:99999;";
       return document.getElementsByTagName('body')[0].appendChild(flipperDiv);
     };
     exports = {
