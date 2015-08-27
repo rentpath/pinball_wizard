@@ -209,6 +209,7 @@
     addFlipper = function() {
       var feature, flipperDiv, flipperHTML, i, len, linkText, ref, toggledText;
       flipperDiv = document.createElement("iframe");
+      flipperDiv.setAttribute('id', 'flipper_frame');
       flipperHTML = "<h3>Available Features:</h3><ul>";
       ref = Object.keys(features);
       for (i = 0, len = ref.length; i < len; i++) {
@@ -226,6 +227,8 @@
         flipperHTML += "<li>" + feature + "&nbsp;<a href='javascript:void(0);' onclick=parent.pinball.toggle('" + feature + "',this);>(" + linkText + ")</a></li>";
       }
       flipperHTML += "</ul>";
+      flipperHTML += "<br/>";
+      flipperHTML += "<a href='javascript:void(0);' onclick=parent.$('#flipper_frame').hide();>close</a>";
       flipperDiv.srcdoc = flipperHTML;
       flipperDiv.style.cssText = "position:fixed;top:0;left:0;width:300px;height:250px;background:white;opacity:.9;font-size:12pt;z-index:99999;";
       return document.getElementsByTagName('body')[0].appendChild(flipperDiv);
