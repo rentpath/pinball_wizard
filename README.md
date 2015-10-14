@@ -131,7 +131,7 @@ define ['pinball_wizard'], (pinball) ->
         # Do something
 ```
 
-## Activating and Testing Features
+## Activating Features for Testing (once)
 
 ### With a URL Param
 Add `pinball` to the URL (e.g. `?pinball=example_a,example_b`).
@@ -156,7 +156,25 @@ activated while debugging.
 ```javascript
 pinball.activate('example','source name');
 ```
+## Activating Features (permanently)
 
+To turn on and keep a feature on, you can activate it permanently in the console. This is only for your browser's session.
+
+```javascript
+pinball.activatePermanently('example')
+```
+
+#### See a List of Permanent Features
+
+```javascript
+pinball.permanent()
+```
+
+#### Reset Permanent Features
+
+```javascript
+pinball.resetPermanent()
+```
 
 ## JsConfig
 The application keeps a list of features and passes them in the JsConfig object (e.g. `window.ApartmentGuide`). These define what's available and activated on page load. AG is hooked up to PinballWizard to automatically be aware of these. No additional code is necessary.
