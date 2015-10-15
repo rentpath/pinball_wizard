@@ -1,3 +1,9 @@
+# v0.4.1
+* [feature] CSS tagger honors permanent features and adds the
+  appropriate CSS class.
+
+[Compare v0.4.0..v0.4.1](https://github.com/primedia/pinball_wizard/compare/v0.4.0...v0.4.1)
+
 # v0.4.0
 * [feature] Added `#activatePermanently('feature_name')` to
   activate features across URLs. Stored in `localStorage`
