@@ -267,6 +267,23 @@ define ['pinball_wizard'], (pinball) ->
       urlParam = '?foo=bar&pinball=a,b&bar'
       expect(pinball._urlValues(urlParam)).toEqual(['a','b'])
 
+  describe '#activatePermanently', ->
+    beforeEach ->
+      pinball.resetPermanent()
+
+    fit 'accepts a single feature', ->
+      pinball.add
+        my_feature1: 'inactive'
+      pinball.activatePermanently('my_feature1')
+      expect(pinball.permanent()).toEqual(['my_feature1'])
+
+    fit 'accepts a comma-separated list of features', ->
+      pinball.add
+        my_feature1: 'inactive'
+        my_feature2: 'inactive'
+      pinball.activatePermanently('my_feature1,my_feature2')
+      expect(pinball.permanent()).toEqual(['my_feature1','my_feature2'])
+
   describe '#activatePermanent', ->
     beforeEach ->
       pinball.add

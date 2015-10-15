@@ -135,8 +135,9 @@ define ->
     JSON.parse(storage.getItem('pinball_wizard') or "[]") or []
 
   activatePermanently = (name) ->
-    appendPermanent(name)
-    activate(name, 'permanent')
+    for n in name.split(',')
+      appendPermanent(n)
+      activate(n, 'permanent')
 
   resetPermanent = ->
     setPermanent []

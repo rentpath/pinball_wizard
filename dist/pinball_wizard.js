@@ -201,8 +201,15 @@
       return JSON.parse(storage.getItem('pinball_wizard') || "[]") || [];
     };
     activatePermanently = function(name) {
-      appendPermanent(name);
-      return activate(name, 'permanent');
+      var i, len, n, ref, results;
+      ref = name.split(',');
+      results = [];
+      for (i = 0, len = ref.length; i < len; i++) {
+        n = ref[i];
+        appendPermanent(n);
+        results.push(activate(n, 'permanent'));
+      }
+      return results;
     };
     resetPermanent = function() {
       return setPermanent([]);
