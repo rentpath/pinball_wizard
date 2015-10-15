@@ -1,7 +1,7 @@
 (function() {
   define(function() {
     return function(ele, pinballQueue, searchQuery) {
-      var add, classNames, entry, feature, featureNames, i, j, len, len1, matches, ref, state;
+      var add, classNames, entry, feature, featureNames, i, j, k, len, len1, len2, matches, ref, ref1, state, storage;
       classNames = [];
       add = function(name) {
         return classNames.push('use-' + name.split('_').join('-'));
@@ -32,6 +32,14 @@
           feature = featureNames[j];
           add(feature);
         }
+      }
+      storage = window.localStorage || {
+        setItem: function() {}
+      };
+      ref1 = JSON.parse(storage.getItem('pinball_wizard')) || [];
+      for (k = 0, len2 = ref1.length; k < len2; k++) {
+        feature = ref1[k];
+        add(feature);
       }
       if (ele) {
         ele.className += ' ' + classNames.join(' ');
