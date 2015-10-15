@@ -1,55 +1,55 @@
 (function() {
   'use strict';
-  var __slice = [].slice;
+  var slice = [].slice;
 
   define(function() {
-    var activate, add, addCSSClassName, cssClassName, deactivate, debug, exports, features, get, isActive, logPrefix, push, removeCSSClassName, reset, showLog, state, subscribe, subscribers, update, urlValues, _buildSubscriber, _log, _notifySubscriberOnActivate, _notifySubscribersOnActivate, _notifySubscribersOnDeactivate, _urlValueMatches, _urlValues;
+    var _buildSubscriber, _log, _notifySubscriberOnActivate, _notifySubscribersOnActivate, _notifySubscribersOnDeactivate, _urlValueMatches, _urlValues, activate, activateAllPermanent, activatePermanently, add, addCSSClassName, appendPermanent, cssClassName, deactivate, debug, exports, features, get, isActive, logPrefix, permanent, push, removeCSSClassName, reset, resetPermanent, setPermanent, showLog, state, storage, subscribe, subscribers, update, urlValues;
     features = {};
     subscribers = {};
     showLog = false;
     logPrefix = '[PinballWizard]';
     _log = function() {
       var args, message;
-      message = arguments[0], args = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
+      message = arguments[0], args = 2 <= arguments.length ? slice.call(arguments, 1) : [];
       if (showLog && window.console && window.console.log) {
-        console.log.apply(console, ["" + logPrefix + " " + message].concat(__slice.call(args)));
+        console.log.apply(console, [logPrefix + " " + message].concat(slice.call(args)));
       }
     };
     _notifySubscribersOnActivate = function(name) {
-      var subscriber, _i, _len, _ref, _results;
+      var i, len, ref, results, subscriber;
       if (subscribers[name] == null) {
         subscribers[name] = [];
       }
-      _ref = subscribers[name];
-      _results = [];
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        subscriber = _ref[_i];
-        _results.push(_notifySubscriberOnActivate(subscriber, name));
+      ref = subscribers[name];
+      results = [];
+      for (i = 0, len = ref.length; i < len; i++) {
+        subscriber = ref[i];
+        results.push(_notifySubscriberOnActivate(subscriber, name));
       }
-      return _results;
+      return results;
     };
     _notifySubscriberOnActivate = function(subscriber, name) {
       _log('Notify subscriber that %s is active', name);
       return subscriber.onActivate();
     };
     _notifySubscribersOnDeactivate = function(name) {
-      var subscriber, _i, _len, _ref, _results;
+      var i, len, ref, results, subscriber;
       if (subscribers[name] == null) {
         subscribers[name] = [];
       }
-      _ref = subscribers[name];
-      _results = [];
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        subscriber = _ref[_i];
-        _results.push(subscriber.onDeactivate());
+      ref = subscribers[name];
+      results = [];
+      for (i = 0, len = ref.length; i < len; i++) {
+        subscriber = ref[i];
+        results.push(subscriber.onDeactivate());
       }
-      return _results;
+      return results;
     };
     _urlValueMatches = function(value) {
-      var v, _i, _len, _ref;
-      _ref = _urlValues();
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        v = _ref[_i];
+      var i, len, ref, v;
+      ref = _urlValues();
+      for (i = 0, len = ref.length; i < len; i++) {
+        v = ref[i];
         if (value === v) {
           return true;
         }
@@ -57,14 +57,14 @@
       return false;
     };
     _urlValues = function(search) {
-      var key, pair, pairs, value, _i, _len, _ref;
+      var i, key, len, pair, pairs, ref, value;
       if (search == null) {
         search = window.location.search;
       }
       pairs = search.substr(1).split('&');
-      for (_i = 0, _len = pairs.length; _i < _len; _i++) {
-        pair = pairs[_i];
-        _ref = pair.split('='), key = _ref[0], value = _ref[1];
+      for (i = 0, len = pairs.length; i < len; i++) {
+        pair = pairs[i];
+        ref = pair.split('='), key = ref[0], value = ref[1];
         if (key === 'pinball' && (value != null)) {
           return value.split(',');
         }
@@ -99,21 +99,21 @@
       }
     };
     add = function(list) {
-      var name, state, _results;
-      _results = [];
+      var name, results, state;
+      results = [];
       for (name in list) {
         state = list[name];
         features[name] = state;
         _log("Added %s: %s.", name, state);
         if (isActive(name)) {
-          _results.push(activate(name, "automatic. added as '" + state + "'"));
+          results.push(activate(name, "automatic. added as '" + state + "'"));
         } else if (_urlValueMatches(name, urlValues)) {
-          _results.push(activate(name, 'URL'));
+          results.push(activate(name, 'URL'));
         } else {
-          _results.push(void 0);
+          results.push(void 0);
         }
       }
-      return _results;
+      return results;
     };
     get = function(name) {
       return features[name];
@@ -187,6 +187,36 @@
       method = params.shift();
       return this[method].apply(this, params);
     };
+    storage = window.localStorage;
+    setPermanent = function(value) {
+      return storage.setItem('pinball_wizard', JSON.stringify(value));
+    };
+    appendPermanent = function(name) {
+      var l;
+      l = permanent();
+      l.push(name);
+      return setPermanent(l);
+    };
+    permanent = function() {
+      return JSON.parse(storage.getItem('pinball_wizard') || "[]") || [];
+    };
+    activatePermanently = function(name) {
+      appendPermanent(name);
+      return activate(name, 'permanent');
+    };
+    resetPermanent = function() {
+      return setPermanent([]);
+    };
+    activateAllPermanent = function() {
+      var i, len, name, ref, results;
+      ref = permanent();
+      results = [];
+      for (i = 0, len = ref.length; i < len; i++) {
+        name = ref[i];
+        results.push(activate(name));
+      }
+      return results;
+    };
     state = function() {
       return features;
     };
@@ -210,7 +240,11 @@
       cssClassName: cssClassName,
       addCSSClassName: addCSSClassName,
       removeCSSClassName: removeCSSClassName,
-      _urlValues: _urlValues
+      _urlValues: _urlValues,
+      activatePermanently: activatePermanently,
+      resetPermanent: resetPermanent,
+      permanent: permanent,
+      activateAllPermanent: activateAllPermanent
     };
     if (typeof window !== "undefined" && window !== null ? window.pinball : void 0) {
       if (_urlValueMatches('debug')) {
@@ -221,6 +255,7 @@
       }
       window.pinball = exports;
     }
+    activateAllPermanent();
     return exports;
   });
 

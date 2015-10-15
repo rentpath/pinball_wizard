@@ -120,6 +120,31 @@ define ->
     method = params.shift()
     @[method].apply(@, params)
 
+
+  storage = window.localStorage
+
+  setPermanent = (value) ->
+    storage.setItem('pinball_wizard', JSON.stringify(value))
+
+  appendPermanent = (name) ->
+    l = permanent()
+    l.push(name)
+    setPermanent l
+
+  permanent = ->
+    JSON.parse(storage.getItem('pinball_wizard') or "[]") or []
+
+  activatePermanently = (name) ->
+    appendPermanent(name)
+    activate(name, 'permanent')
+
+  resetPermanent = ->
+    setPermanent []
+
+  activateAllPermanent = ->
+    for name in permanent()
+      activate(name)
+
   state = ->
     features
 
@@ -145,6 +170,10 @@ define ->
     addCSSClassName
     removeCSSClassName
     _urlValues
+    activatePermanently
+    resetPermanent
+    permanent
+    activateAllPermanent
   }
 
   # Initialize
@@ -153,5 +182,7 @@ define ->
     while window.pinball.length
       exports.push window.pinball.shift()
     window.pinball = exports
+
+  activateAllPermanent()
 
   exports

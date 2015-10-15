@@ -266,3 +266,45 @@ define ['pinball_wizard'], (pinball) ->
     it 'works with other keys/values', ->
       urlParam = '?foo=bar&pinball=a,b&bar'
       expect(pinball._urlValues(urlParam)).toEqual(['a','b'])
+
+  describe '#activatePermanent', ->
+    beforeEach ->
+      pinball.add
+        my_feature: 'inactive'
+      pinball.activatePermanently('my_feature')
+
+    it 'adds it to the list of permanent', ->
+      expect(pinball.permanent()).toEqual(['my_feature'])
+
+    it 'activates the feature', ->
+      expect(pinball.isActive('my_feature')).toEqual(true)
+
+  describe '#permanent', ->
+    beforeEach ->
+      pinball.resetPermanent()
+      pinball.add
+        my_feature: 'inactive'
+
+    it 'is empty by default', ->
+      expect(pinball.permanent()).toEqual([])
+
+    it 'builds a list of those permanent', ->
+      pinball.activatePermanently('my_feature')
+      expect(pinball.permanent()).toEqual(['my_feature'])
+
+    it 'is empty after resetting', ->
+      pinball.activatePermanently('my_feature')
+      pinball.resetPermanent()
+      expect(pinball.permanent()).toEqual([])
+
+  describe '#activateAllPermanent', ->
+    beforeEach ->
+      pinball.resetPermanent()
+      pinball.add
+        my_feature: 'inactive'
+
+    it 'is active', ->
+      pinball.activatePermanently('my_feature')
+      pinball.deactivate 'my_feature'
+      pinball.activateAllPermanent()
+      expect(pinball.isActive('my_feature')).toEqual(true)

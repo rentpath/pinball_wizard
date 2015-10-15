@@ -1,13 +1,13 @@
 (function() {
   define(function() {
     return function(ele, pinballQueue, searchQuery) {
-      var add, classNames, entry, feature, featureNames, matches, state, _i, _j, _len, _len1, _ref;
+      var add, classNames, entry, feature, featureNames, i, j, len, len1, matches, ref, state;
       classNames = [];
       add = function(name) {
         return classNames.push('use-' + name.split('_').join('-'));
       };
-      for (_i = 0, _len = pinballQueue.length; _i < _len; _i++) {
-        entry = pinballQueue[_i];
+      for (i = 0, len = pinballQueue.length; i < len; i++) {
+        entry = pinballQueue[i];
         if (!entry.length) {
           continue;
         }
@@ -16,9 +16,9 @@
             add(entry[1]);
             break;
           case 'add':
-            _ref = entry[1];
-            for (feature in _ref) {
-              state = _ref[feature];
+            ref = entry[1];
+            for (feature in ref) {
+              state = ref[feature];
               if (state === 'active') {
                 add(feature);
               }
@@ -28,8 +28,8 @@
       matches = searchQuery.match(/pinball=([a-z-_,]+)/i);
       if (matches && matches.length > 1) {
         featureNames = (matches[1] + '').split(',');
-        for (_j = 0, _len1 = featureNames.length; _j < _len1; _j++) {
-          feature = featureNames[_j];
+        for (j = 0, len1 = featureNames.length; j < len1; j++) {
+          feature = featureNames[j];
           add(feature);
         }
       }
