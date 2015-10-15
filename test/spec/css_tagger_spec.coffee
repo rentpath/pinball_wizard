@@ -48,3 +48,20 @@ define ['css_tagger'], (tagger) ->
 
       tagger ele, pinballQueue, '?pinball=feature_c'
       expect(ele.className).toEqual ' use-feature-a use-feature-b use-feature-c'
+
+    it 'should add classes from the permanent storage', ->
+      ele = document.createElement 'div'
+      window.localStorage.setItem 'pinball_wizard', JSON.stringify(['feature_a','feature_b'])
+
+      tagger ele, [], ''
+      expect(ele.className).toEqual ' use-feature-a use-feature-b'
+
+      # Cleanup
+      window.localStorage.setItem 'pinball_wizard', null
+
+    it 'should not add any when permanent storage is null', ->
+      ele = document.createElement 'div'
+      window.localStorage.setItem 'pinball_wizard', null
+
+      tagger ele, [], ''
+      expect(ele.className).toEqual ''

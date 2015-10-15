@@ -176,12 +176,38 @@ pinball.permanent()
 pinball.resetPermanent()
 ```
 
-## JsConfig
-The application keeps a list of features and passes them in the JsConfig object (e.g. `window.ApartmentGuide`). These define what's available and activated on page load. AG is hooked up to PinballWizard to automatically be aware of these. No additional code is necessary.
+## JsConfig Registry
+The application keeps a list of features and passes them in the JsConfig object (e.g. `window.pinball`). These define what's available and activated on page load.
 
-`{ "feature_name": "state", "feature_name": "state" }`
+#### Plain JavaScript
+```javascript
+<head>
+  <script type="text/javascript">
+	window.pinball = window.pinball || []
+    window.pinball.push(['add', { "feature_a": "active", "feature_b": "inactive", "feature_c": "disabled" }]);
+  </script>
+<head>
+```
 
-e.g. `{ "feature_a": "active", "feature_b": "inactive", "feature_c": "disabled" }`
+#### Ruby (example is in slim)
+```slim
+head
+  javascript:
+    window.pinball = window.pinball || [];
+    window.pinball.push(['add', #{{PinballWizard::Registry.to_h.to_json}}]);
+```
+
+## Removing the Flicker
+
+When using `.use-{feature-name}`, you may notice a shift or flicker in the UI. This occurs when pinball's JavaScript executes after the `DOMContentReady` event. To prevent this, add `dist/css_tagger.min.js` into your `<head>` tag. For example:
+
+```html
+<head>
+	<script type="text/javascript">
+		// paste snippet from dist/css_tagger.min.js
+	</script>
+</head>
+```
 
 ## Debugging
 
