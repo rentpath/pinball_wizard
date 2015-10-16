@@ -289,7 +289,7 @@ define ['pinball_wizard'], (pinball) ->
       pinball.add
         my_feature1: 'inactive'
         my_feature2: 'inactive'
-      pinball.activatePermanently('my_feature1,my_feature2')
+      pinball.activatePermanently('my_feature1', 'my_feature2')
       expect(pinball.permanent()).toEqual(['my_feature1','my_feature2'])
       expect(pinball.isActive('my_feature1')).toEqual(true)
       expect(pinball.isActive('my_feature2')).toEqual(true)
