@@ -267,17 +267,33 @@ define ['pinball_wizard'], (pinball) ->
       urlParam = '?foo=bar&pinball=a,b&bar'
       expect(pinball._urlValues(urlParam)).toEqual(['a','b'])
 
-  describe '#activatePermanent', ->
+  describe '#activatePermanently', ->
     beforeEach ->
+      pinball.resetPermanent()
       pinball.add
-        my_feature: 'inactive'
-      pinball.activatePermanently('my_feature')
+        my_feature1: 'inactive'
+
+    it 'accepts a single feature', ->
+      pinball.activatePermanently('my_feature1')
+      expect(pinball.permanent()).toEqual(['my_feature1'])
 
     it 'adds it to the list of permanent', ->
-      expect(pinball.permanent()).toEqual(['my_feature'])
+      pinball.activatePermanently('my_feature1')
+      expect(pinball.permanent()).toEqual(['my_feature1'])
 
     it 'activates the feature', ->
-      expect(pinball.isActive('my_feature')).toEqual(true)
+      pinball.activatePermanently('my_feature1')
+      expect(pinball.isActive('my_feature1')).toEqual(true)
+
+    it 'accepts a comma-separated list of features', ->
+      pinball.add
+        my_feature1: 'inactive'
+        my_feature2: 'inactive'
+      pinball.activatePermanently('my_feature1', 'my_feature2')
+      expect(pinball.permanent()).toEqual(['my_feature1','my_feature2'])
+      expect(pinball.isActive('my_feature1')).toEqual(true)
+      expect(pinball.isActive('my_feature2')).toEqual(true)
+
 
   describe '#permanent', ->
     beforeEach ->

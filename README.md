@@ -164,6 +164,12 @@ To turn on and keep a feature on, you can activate it permanently in the console
 pinball.activatePermanently('example')
 ```
 
+You can permanently activate multiple features like so:
+
+```javascript
+pinball.activatePermanently('example1', 'example2')
+```
+
 #### See a List of Permanent Features
 
 ```javascript
