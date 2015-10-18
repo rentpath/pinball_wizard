@@ -1,3 +1,6 @@
+# v0.4.2
+* [feature] `#activatePermanently` now supports multiple features: `('feature1', 'feature2'...)` 
+
 # v0.4.1
 * [feature] CSS tagger honors permanent features and adds the
   appropriate CSS class.
