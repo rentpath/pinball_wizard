@@ -3,8 +3,8 @@ require File.expand_path('../lib/pinball_wizard/version', __FILE__)
 require 'date'
 
 Gem::Specification.new do |gem|
-  gem.authors       = ["Caleb Wright", "Mark Herman", "RentPath Team"]
-  gem.email         = ["cwright@rentpath.com", "markherman@rentpath.com"]
+  gem.authors       = ["Caleb Wright", "Mark Herman", "Michael Pelz-Sherman", "RentPath Team"]
+  gem.email         = ["cwright@rentpath.com", "markherman@rentpath.com", "mpelzsherman@gmail.com"]
   gem.homepage      = 'https://github.com/primedia/pinball_wizard'
   gem.description   = 'Build flippable features.'
   gem.summary       = "Lib to build flippable features."
