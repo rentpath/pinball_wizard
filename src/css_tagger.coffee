@@ -19,7 +19,30 @@ define ->
     classNames = []
 
     add = (name) ->
-      classNames.push 'use-' + name.split('_').join('-')
+      classToAdd = 'use-' + name.split('_').join('-')
+      if !added(name)
+        classNames.push classToAdd
+
+    added = (name) ->
+      classToCheck = 'use-' + name.split('_').join('-')
+      classNames.indexOf(classToCheck) != -1
+
+    addWithout = (name) ->
+      if !added(name)
+        classNames.push 'without-' + name.split('_').join('-')
+
+    # Activated by the URL
+    matches = searchQuery.match(/pinball=([a-z-_,]+)/i)
+    if matches && matches.length > 1
+      featureNames = (matches[1] + '').split(',')
+
+      for feature in featureNames
+        add feature
+
+    # Activated permanently
+    storage = window.localStorage or { setItem: -> }
+    for feature in (JSON.parse(storage.getItem('pinball_wizard')) or [])
+      add feature
 
     # Activated by the queue
     for entry in pinballQueue
@@ -31,22 +54,11 @@ define ->
 
         when 'add'
           for feature, state of entry[1]
-            add feature if state == 'active'
+            if state == 'active'
+              add feature
+            else if state == 'inactive'
+              addWithout feature
 
-    # Activated by the URL
-    matches = searchQuery.match(/pinball=([a-z-_,]+)/i)
-    if matches && matches.length > 1
-      featureNames = (matches[1] + '').split(',')
-
-      for feature in featureNames
-        add feature
-
-
-    # Activated permanently
-    storage = window.localStorage or { setItem: -> }
-    for feature in (JSON.parse(storage.getItem('pinball_wizard')) or [])
-      add feature
-
-    ele.className += ' ' + classNames.join(' ') if ele
+    ele.className += ' ' + classNames.sort().join(' ') if ele
 
     return
