@@ -2,6 +2,7 @@ define ['pinball_wizard'], (pinball) ->
 
   beforeEach ->
     pinball.reset()
+    document.documentElement.className = ''
 
   describe 'initialize', ->
     it 'is defined', ->
@@ -87,6 +88,12 @@ define ['pinball_wizard'], (pinball) ->
 
       expect(pinball.get('a')).toEqual('disabled')
 
+    it 'adds use-feature class to css', ->
+      pinball.add
+        feature_a: 'inactive'
+      pinball.activate 'feature_a'
+      expect(document.documentElement.className).toEqual(' use-feature-a')
+
   describe '#deactivate', ->
     it 'makes an active feature inactive', ->
       pinball.add
@@ -94,6 +101,12 @@ define ['pinball_wizard'], (pinball) ->
       pinball.deactivate 'a'
 
       expect(pinball.get('a')).toEqual('inactive')
+
+    it 'adds without-feature class to css', ->
+      pinball.add
+        feature_a: 'active'
+      pinball.activate 'feature_a'
+      expect(document.documentElement.className).toEqual(' without-feature-a')
 
   describe '#isActive', ->
     beforeEach ->
