@@ -294,28 +294,28 @@ define ['pinball_wizard'], (pinball) ->
     beforeEach ->
       pinball.resetPermanent()
       pinball.add
-        my_feature1: 'inactive'
+        my_feature_one: 'inactive'
 
     it 'accepts a single feature', ->
-      pinball.activatePermanently('my_feature1')
-      expect(pinball.permanent()).toEqual(['my_feature1'])
+      pinball.activatePermanently('my_feature_one')
+      expect(pinball.permanent()).toEqual(['my_feature_one'])
 
     it 'adds it to the list of permanent', ->
-      pinball.activatePermanently('my_feature1')
-      expect(pinball.permanent()).toEqual(['my_feature1'])
+      pinball.activatePermanently('my_feature_one')
+      expect(pinball.permanent()).toEqual(['my_feature_one'])
 
     it 'activates the feature', ->
-      pinball.activatePermanently('my_feature1')
-      expect(pinball.isActive('my_feature1')).toEqual(true)
+      pinball.activatePermanently('my_feature_one')
+      expect(pinball.isActive('my_feature_one')).toEqual(true)
 
     it 'accepts a comma-separated list of features', ->
       pinball.add
-        my_feature1: 'inactive'
-        my_feature2: 'inactive'
-      pinball.activatePermanently('my_feature1', 'my_feature2')
-      expect(pinball.permanent()).toEqual(['my_feature1','my_feature2'])
-      expect(pinball.isActive('my_feature1')).toEqual(true)
-      expect(pinball.isActive('my_feature2')).toEqual(true)
+        my_feature_one: 'inactive'
+        my_feature_two: 'inactive'
+      pinball.activatePermanently('my_feature_one', 'my_feature_two')
+      expect(pinball.permanent()).toEqual(['my_feature_one','my_feature_two'])
+      expect(pinball.isActive('my_feature_one')).toEqual(true)
+      expect(pinball.isActive('my_feature_two')).toEqual(true)
 
 
   describe '#permanent', ->
