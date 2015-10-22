@@ -94,6 +94,13 @@ define ['pinball_wizard'], (pinball) ->
       pinball.activate 'feature_a'
       expect(document.documentElement.className).toEqual(' use-feature-a')
 
+    it 'removes without-feature', ->
+      document.documentElement.className = ' without-feature-a'
+      pinball.add
+        feature_a: 'inactive'
+      pinball.activate 'feature_a'
+      expect(document.documentElement.className).toEqual(' use-feature-a')
+
   describe '#deactivate', ->
     it 'makes an active feature inactive', ->
       pinball.add
