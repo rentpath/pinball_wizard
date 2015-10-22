@@ -308,7 +308,7 @@ define ['pinball_wizard'], (pinball) ->
       pinball.activatePermanently('my_feature_one')
       expect(pinball.isActive('my_feature_one')).toEqual(true)
 
-    it 'accepts a comma-separated list of features', ->
+    it 'accepts multiple features', ->
       pinball.add
         my_feature_one: 'inactive'
         my_feature_two: 'inactive'
