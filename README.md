@@ -67,9 +67,11 @@ If the feature is not active immediately, it's recommended to hide the HTML with
 
 ## CSS
 
-PinballWizard automatically adds and removes a CSS class named `.use-{feature-name}` to the `<html>` tag. This allows you to write CSS when features are active.
+PinballWizard automatically adds and removes CSS classes named `.use-{feature-name}` and `without-{feature-name}` to the `<html>` tag. 
 
-It is also recommended to organize your CSS similar to Ruby:
+This supports keeping the global and feature-flipped CSS styles separated.
+
+It is recommended to organize your CSS like so:
 
 ```scss
 // app/assets/stylesheets/features/_example.scss
@@ -80,6 +82,17 @@ It is also recommended to organize your CSS similar to Ruby:
 ```
 
 Then include it on the main file with `@import 'features/example'`
+
+In your main SCSS file, wrap all CSS rules for the inactive state in the `without-{feature-name}` class, like so: 
+ 
+```scss 
+ .without-example {
+   // CSS when the 'example' feature is inactive;
+   // i.e. current production code.
+ }
+```
+
+When your feature is published (made part of the permanent codebase), you can simply delete the entire `.without-example` section and remove the `.use-example` class wrapper. 
 
 
 ## JavaScript
