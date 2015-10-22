@@ -54,7 +54,7 @@
               state = ref1[feature];
               if (state === 'active') {
                 add(feature);
-              } else if (state === 'inactive') {
+              } else {
                 addWithout(feature);
               }
             }

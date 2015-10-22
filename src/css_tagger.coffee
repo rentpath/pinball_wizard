@@ -59,7 +59,7 @@ define ->
           for feature, state of entry[1]
             if state == 'active'
               add feature
-            else if state == 'inactive'
+            else
               addWithout feature
 
     ele.className += ' ' + classNames.sort().join(' ') if ele
