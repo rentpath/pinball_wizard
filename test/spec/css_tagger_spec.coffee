@@ -21,7 +21,7 @@ define ['css_tagger'], (tagger) ->
       tagger ele, [], '?pinball=feature_a,feature_b&other=param'
       expect(ele.className).toEqual 'foo-bar use-feature-a use-feature-b'
 
-    it 'should add classes from added pinball features', ->
+    it 'should add classes from active and inactive pinball features', ->
       ele = document.createElement 'div'
       pinballQueue = [
         [
@@ -33,7 +33,20 @@ define ['css_tagger'], (tagger) ->
       ]
 
       tagger ele, pinballQueue, ''
-      expect(ele.className).toEqual ' use-feature-a use-feature-c'
+      expect(ele.className).toEqual ' use-feature-a use-feature-c without-feature-b'
+
+    it 'should add without-feature classes for inactive and disabled pinball features', ->
+      ele = document.createElement 'div'
+      pinballQueue = [
+        [
+          'add'
+          feature_a: 'inactive'
+          feature_b: 'disabled'
+        ]
+      ]
+
+      tagger ele, pinballQueue, ''
+      expect(ele.className).toEqual ' without-feature-a without-feature-b'
 
     it 'should add classes from queue and query params', ->
       ele = document.createElement 'div'
@@ -41,20 +54,28 @@ define ['css_tagger'], (tagger) ->
         [
           'add'
           feature_a: 'active'
+          feature_d: 'inactive'
         ],
         ['activate', 'feature_b'],
         ['something-odd']
       ]
 
       tagger ele, pinballQueue, '?pinball=feature_c'
-      expect(ele.className).toEqual ' use-feature-a use-feature-b use-feature-c'
+      expect(ele.className).toEqual ' use-feature-a use-feature-b use-feature-c without-feature-d'
 
     it 'should add classes from the permanent storage', ->
       ele = document.createElement 'div'
       window.localStorage.setItem 'pinball_wizard', JSON.stringify(['feature_a','feature_b'])
+      pinballQueue = [
+        [
+          'add'
+          feature_c: 'active'
+          feature_d: 'inactive'
+        ]
+      ]
 
-      tagger ele, [], ''
-      expect(ele.className).toEqual ' use-feature-a use-feature-b'
+      tagger ele, pinballQueue, ''
+      expect(ele.className).toEqual ' use-feature-a use-feature-b use-feature-c without-feature-d'
 
       # Cleanup
       window.localStorage.setItem 'pinball_wizard', null

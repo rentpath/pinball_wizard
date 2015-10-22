@@ -2,6 +2,7 @@ define ['pinball_wizard'], (pinball) ->
 
   beforeEach ->
     pinball.reset()
+    document.documentElement.className = ''
 
   describe 'initialize', ->
     it 'is defined', ->
@@ -87,6 +88,19 @@ define ['pinball_wizard'], (pinball) ->
 
       expect(pinball.get('a')).toEqual('disabled')
 
+    it 'adds use-feature class to css', ->
+      pinball.add
+        feature_a: 'inactive'
+      pinball.activate 'feature_a'
+      expect(document.documentElement.className).toEqual(' use-feature-a')
+
+    it 'removes without-feature', ->
+      document.documentElement.className = 'foo without-feature-a bar'
+      pinball.add
+        feature_a: 'inactive'
+      pinball.activate 'feature_a'
+      expect(document.documentElement.className).toMatch(/foo\s+bar\s+use-feature-a/)
+
   describe '#deactivate', ->
     it 'makes an active feature inactive', ->
       pinball.add
@@ -94,6 +108,12 @@ define ['pinball_wizard'], (pinball) ->
       pinball.deactivate 'a'
 
       expect(pinball.get('a')).toEqual('inactive')
+
+    it 'adds without-feature class to css', ->
+      pinball.add
+        feature_a: 'active'
+      pinball.deactivate 'feature_a'
+      expect(document.documentElement.className).toEqual(' without-feature-a')
 
   describe '#isActive', ->
     beforeEach ->
@@ -235,16 +255,19 @@ define ['pinball_wizard'], (pinball) ->
     it 'builds the name with the prefix', ->
       expect(pinball.cssClassName('my_feature')).toEqual 'use-my-feature'
 
+    it 'builds the name with a custom prefix', ->
+      expect(pinball.cssClassName('my_feature', 'without-')).toEqual 'without-my-feature'
+
   describe '#addCSSClassName', ->
     it 'appends', ->
       ele = document.createElement 'div'
-      pinball.addCSSClassName('my_feature', ele)
+      pinball.addCSSClassName('use-my-feature', ele)
       expect(ele.className).toEqual ' use-my-feature'
 
     it 'does not append twice', ->
       ele = document.createElement 'div'
-      pinball.addCSSClassName('my_feature', ele)
-      pinball.addCSSClassName('my_feature', ele)
+      pinball.addCSSClassName('use-my-feature', ele)
+      pinball.addCSSClassName('use-my-feature', ele)
       expect(ele.className).toEqual ' use-my-feature'
 
   describe '#removeCSSClassName', ->
@@ -271,28 +294,28 @@ define ['pinball_wizard'], (pinball) ->
     beforeEach ->
       pinball.resetPermanent()
       pinball.add
-        my_feature1: 'inactive'
+        my_feature_one: 'inactive'
 
     it 'accepts a single feature', ->
-      pinball.activatePermanently('my_feature1')
-      expect(pinball.permanent()).toEqual(['my_feature1'])
+      pinball.activatePermanently('my_feature_one')
+      expect(pinball.permanent()).toEqual(['my_feature_one'])
 
     it 'adds it to the list of permanent', ->
-      pinball.activatePermanently('my_feature1')
-      expect(pinball.permanent()).toEqual(['my_feature1'])
+      pinball.activatePermanently('my_feature_one')
+      expect(pinball.permanent()).toEqual(['my_feature_one'])
 
     it 'activates the feature', ->
-      pinball.activatePermanently('my_feature1')
-      expect(pinball.isActive('my_feature1')).toEqual(true)
+      pinball.activatePermanently('my_feature_one')
+      expect(pinball.isActive('my_feature_one')).toEqual(true)
 
-    it 'accepts a comma-separated list of features', ->
+    it 'accepts multiple features', ->
       pinball.add
-        my_feature1: 'inactive'
-        my_feature2: 'inactive'
-      pinball.activatePermanently('my_feature1', 'my_feature2')
-      expect(pinball.permanent()).toEqual(['my_feature1','my_feature2'])
-      expect(pinball.isActive('my_feature1')).toEqual(true)
-      expect(pinball.isActive('my_feature2')).toEqual(true)
+        my_feature_one: 'inactive'
+        my_feature_two: 'inactive'
+      pinball.activatePermanently('my_feature_one', 'my_feature_two')
+      expect(pinball.permanent()).toEqual(['my_feature_one','my_feature_two'])
+      expect(pinball.isActive('my_feature_one')).toEqual(true)
+      expect(pinball.isActive('my_feature_two')).toEqual(true)
 
 
   describe '#permanent', ->

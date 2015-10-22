@@ -45,13 +45,11 @@ define ->
   cssClassName = (name, prefix = 'use-') ->
     prefix + name.split('_').join('-')
 
-  addCSSClassName = (name, ele = document.documentElement) ->
-    cN = cssClassName(name)
+  addCSSClassName = (cN, ele = document.documentElement) ->
     if ele.className.indexOf(cN) < 0
       ele.className += ' ' + cN
 
-  removeCSSClassName = (name, ele = document.documentElement) ->
-    cN = cssClassName(name)
+  removeCSSClassName = (cN, ele = document.documentElement) ->
     if ele.className.indexOf(cN) >= 0
       ele.className = ele.className.replace cN, ''
 
@@ -80,7 +78,8 @@ define ->
       when 'inactive'
         _log "Activate %s%s.", name, source
         update(name, 'active')
-        addCSSClassName(name)
+        addCSSClassName(cssClassName(name, 'use-'))
+        removeCSSClassName(cssClassName(name, 'without-'))
         _notifySubscribersOnActivate(name)
       when 'active'
         _log "Attempted to activate %s, but it is already active%s.", name, source
@@ -96,7 +95,8 @@ define ->
       when 'active'
         _log "Dectivate %s%s.", name, source
         update(name, 'inactive')
-        removeCSSClassName(name)
+        removeCSSClassName(cssClassName(name, 'use-'))
+        addCSSClassName(cssClassName(name, 'without-'))
         _notifySubscribersOnDeactivate(name)
       else
         _log "Attempted to deactivate %s, but it is %s%s.", name, state, source

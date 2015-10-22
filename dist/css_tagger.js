@@ -1,13 +1,46 @@
 (function() {
   define(function() {
     return function(ele, pinballQueue, searchQuery) {
-      var add, classNames, entry, feature, featureNames, i, j, k, len, len1, len2, matches, ref, ref1, state, storage;
+      var add, addWithout, classNames, entry, feature, featureNames, i, isAdded, j, k, kebabify, len, len1, len2, matches, ref, ref1, state, storage;
       classNames = [];
       add = function(name) {
-        return classNames.push('use-' + name.split('_').join('-'));
+        var classToAdd;
+        classToAdd = 'use-' + kebabify(name);
+        if (!isAdded(name)) {
+          return classNames.push(classToAdd);
+        }
       };
-      for (i = 0, len = pinballQueue.length; i < len; i++) {
-        entry = pinballQueue[i];
+      isAdded = function(name) {
+        var classToCheck;
+        classToCheck = 'use-' + kebabify(name);
+        return classNames.indexOf(classToCheck) !== -1;
+      };
+      addWithout = function(name) {
+        if (!isAdded(name)) {
+          return classNames.push('without-' + kebabify(name));
+        }
+      };
+      kebabify = function(name) {
+        return name.split('_').join('-');
+      };
+      matches = searchQuery.match(/pinball=([a-z-_,]+)/i);
+      if (matches && matches.length > 1) {
+        featureNames = (matches[1] + '').split(',');
+        for (i = 0, len = featureNames.length; i < len; i++) {
+          feature = featureNames[i];
+          add(feature);
+        }
+      }
+      storage = window.localStorage || {
+        setItem: function() {}
+      };
+      ref = JSON.parse(storage.getItem('pinball_wizard')) || [];
+      for (j = 0, len1 = ref.length; j < len1; j++) {
+        feature = ref[j];
+        add(feature);
+      }
+      for (k = 0, len2 = pinballQueue.length; k < len2; k++) {
+        entry = pinballQueue[k];
         if (!entry.length) {
           continue;
         }
@@ -16,33 +49,19 @@
             add(entry[1]);
             break;
           case 'add':
-            ref = entry[1];
-            for (feature in ref) {
-              state = ref[feature];
+            ref1 = entry[1];
+            for (feature in ref1) {
+              state = ref1[feature];
               if (state === 'active') {
                 add(feature);
+              } else {
+                addWithout(feature);
               }
             }
         }
       }
-      matches = searchQuery.match(/pinball=([a-z-_,]+)/i);
-      if (matches && matches.length > 1) {
-        featureNames = (matches[1] + '').split(',');
-        for (j = 0, len1 = featureNames.length; j < len1; j++) {
-          feature = featureNames[j];
-          add(feature);
-        }
-      }
-      storage = window.localStorage || {
-        setItem: function() {}
-      };
-      ref1 = JSON.parse(storage.getItem('pinball_wizard')) || [];
-      for (k = 0, len2 = ref1.length; k < len2; k++) {
-        feature = ref1[k];
-        add(feature);
-      }
       if (ele) {
-        ele.className += ' ' + classNames.join(' ');
+        ele.className += ' ' + classNames.sort().join(' ');
       }
     };
   });
