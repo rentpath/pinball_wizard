@@ -20,15 +20,15 @@ define ->
 
     add = (name) ->
       classToAdd = 'use-' + kebabify(name)
-      if !added(name)
+      if !isAdded(name)
         classNames.push classToAdd
 
-    added = (name) ->
+    isAdded = (name) ->
       classToCheck = 'use-' + kebabify(name)
       classNames.indexOf(classToCheck) != -1
 
     addWithout = (name) ->
-      if !added(name)
+      if !isAdded(name)
         classNames.push 'without-' + kebabify(name)
 
     kebabify = (name) ->

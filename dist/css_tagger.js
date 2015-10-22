@@ -1,22 +1,22 @@
 (function() {
   define(function() {
     return function(ele, pinballQueue, searchQuery) {
-      var add, addWithout, added, classNames, entry, feature, featureNames, i, j, k, kebabify, len, len1, len2, matches, ref, ref1, state, storage;
+      var add, addWithout, classNames, entry, feature, featureNames, i, isAdded, j, k, kebabify, len, len1, len2, matches, ref, ref1, state, storage;
       classNames = [];
       add = function(name) {
         var classToAdd;
         classToAdd = 'use-' + kebabify(name);
-        if (!added(name)) {
+        if (!isAdded(name)) {
           return classNames.push(classToAdd);
         }
       };
-      added = function(name) {
+      isAdded = function(name) {
         var classToCheck;
         classToCheck = 'use-' + kebabify(name);
         return classNames.indexOf(classToCheck) !== -1;
       };
       addWithout = function(name) {
-        if (!added(name)) {
+        if (!isAdded(name)) {
           return classNames.push('without-' + kebabify(name));
         }
       };
