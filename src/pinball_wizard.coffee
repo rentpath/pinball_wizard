@@ -79,6 +79,7 @@ define ->
         _log "Activate %s%s.", name, source
         update(name, 'active')
         addCSSClassName(cssClassName(name, 'use-'))
+        removeCSSClassName(cssClassName(name, 'without-'))
         _notifySubscribersOnActivate(name)
       when 'active'
         _log "Attempted to activate %s, but it is already active%s.", name, source
