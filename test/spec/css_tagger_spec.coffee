@@ -35,6 +35,19 @@ define ['css_tagger'], (tagger) ->
       tagger ele, pinballQueue, ''
       expect(ele.className).toEqual ' use-feature-a use-feature-c without-feature-b'
 
+    it 'should add without-feature classes for inactive and disabled pinball features', ->
+      ele = document.createElement 'div'
+      pinballQueue = [
+        [
+          'add'
+          feature_a: 'inactive'
+          feature_b: 'disabled'
+        ]
+      ]
+
+      tagger ele, pinballQueue, ''
+      expect(ele.className).toEqual ' without-feature-a without-feature-b'
+
     it 'should add classes from queue and query params', ->
       ele = document.createElement 'div'
       pinballQueue = [
