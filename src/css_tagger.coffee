@@ -19,17 +19,20 @@ define ->
     classNames = []
 
     add = (name) ->
-      classToAdd = 'use-' + name.split('_').join('-')
+      classToAdd = 'use-' + kebabify(name)
       if !added(name)
         classNames.push classToAdd
 
     added = (name) ->
-      classToCheck = 'use-' + name.split('_').join('-')
+      classToCheck = 'use-' + kebabify(name)
       classNames.indexOf(classToCheck) != -1
 
     addWithout = (name) ->
       if !added(name)
-        classNames.push 'without-' + name.split('_').join('-')
+        classNames.push 'without-' + kebabify(name)
+
+    kebabify = (name) ->
+      name.split('_').join('-')
 
     # Activated by the URL
     matches = searchQuery.match(/pinball=([a-z-_,]+)/i)
