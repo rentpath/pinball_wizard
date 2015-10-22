@@ -78,22 +78,18 @@
       }
       return prefix + name.split('_').join('-');
     };
-    addCSSClassName = function(name, ele) {
-      var cN;
+    addCSSClassName = function(cN, ele) {
       if (ele == null) {
         ele = document.documentElement;
       }
-      cN = cssClassName(name);
       if (ele.className.indexOf(cN) < 0) {
         return ele.className += ' ' + cN;
       }
     };
-    removeCSSClassName = function(name, ele) {
-      var cN;
+    removeCSSClassName = function(cN, ele) {
       if (ele == null) {
         ele = document.documentElement;
       }
-      cN = cssClassName(name);
       if (ele.className.indexOf(cN) >= 0) {
         return ele.className = ele.className.replace(cN, '');
       }
@@ -134,7 +130,7 @@
         case 'inactive':
           _log("Activate %s%s.", name, source);
           update(name, 'active');
-          addCSSClassName(name);
+          addCSSClassName(cssClassName(name, 'use-'));
           return _notifySubscribersOnActivate(name);
         case 'active':
           return _log("Attempted to activate %s, but it is already active%s.", name, source);
@@ -155,7 +151,8 @@
         case 'active':
           _log("Dectivate %s%s.", name, source);
           update(name, 'inactive');
-          removeCSSClassName(name);
+          removeCSSClassName(cssClassName(name, 'use-'));
+          addCSSClassName(cssClassName(name, 'without-'));
           return _notifySubscribersOnDeactivate(name);
         default:
           return _log("Attempted to deactivate %s, but it is %s%s.", name, state, source);

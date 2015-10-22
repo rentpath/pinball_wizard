@@ -105,7 +105,7 @@ define ['pinball_wizard'], (pinball) ->
     it 'adds without-feature class to css', ->
       pinball.add
         feature_a: 'active'
-      pinball.activate 'feature_a'
+      pinball.deactivate 'feature_a'
       expect(document.documentElement.className).toEqual(' without-feature-a')
 
   describe '#isActive', ->
@@ -248,16 +248,19 @@ define ['pinball_wizard'], (pinball) ->
     it 'builds the name with the prefix', ->
       expect(pinball.cssClassName('my_feature')).toEqual 'use-my-feature'
 
+    it 'builds the name with a custom prefix', ->
+      expect(pinball.cssClassName('my_feature', 'without-')).toEqual 'without-my-feature'
+
   describe '#addCSSClassName', ->
     it 'appends', ->
       ele = document.createElement 'div'
-      pinball.addCSSClassName('my_feature', ele)
+      pinball.addCSSClassName('use-my-feature', ele)
       expect(ele.className).toEqual ' use-my-feature'
 
     it 'does not append twice', ->
       ele = document.createElement 'div'
-      pinball.addCSSClassName('my_feature', ele)
-      pinball.addCSSClassName('my_feature', ele)
+      pinball.addCSSClassName('use-my-feature', ele)
+      pinball.addCSSClassName('use-my-feature', ele)
       expect(ele.className).toEqual ' use-my-feature'
 
   describe '#removeCSSClassName', ->
