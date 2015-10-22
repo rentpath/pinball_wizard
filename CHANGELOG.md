@@ -1,3 +1,6 @@
+# v1.0.0
+* [feature] Now adds`without-` classes to inactive features to support better CSS partitioning between features and production code. 
+
 # v0.4.2
 * [feature] `#activatePermanently` now supports multiple features: `('feature1', 'feature2'...)` 
 
