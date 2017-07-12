@@ -95,6 +95,17 @@ In your main SCSS file, wrap all CSS rules for the inactive state in the `withou
 When your feature is published (made part of the permanent codebase), you can simply delete the entire `.without-example` section and remove the `.use-example` class wrapper. 
 
 
+When using `.use-{feature-name}`, you may notice a shift or flicker in the UI. This occurs when pinball's JavaScript executes after the `DOMContentReady` event. To prevent this, add `dist/css_tagger.min.js` into your `<head>` tag. For example:
+
+```html
+<head>
+	<script type="text/javascript">
+		// paste snippet from dist/css_tagger.min.js
+	</script>
+</head>
+```
+be certain to update your usage of this snippet when updating `pinball_wizard`
+
 ## JavaScript
 
 Features subscribe to events and respond when they're activated or deactivated. It no longer needs to know about Optimizely, cookies, or url params. (Single Responsibility Principle FTW)
@@ -214,18 +225,6 @@ head
   javascript:
     window.pinball = window.pinball || [];
     window.pinball.push(['add', #{{PinballWizard::Registry.to_h.to_json}}]);
-```
-
-## Removing the Flicker
-
-When using `.use-{feature-name}`, you may notice a shift or flicker in the UI. This occurs when pinball's JavaScript executes after the `DOMContentReady` event. To prevent this, add `dist/css_tagger.min.js` into your `<head>` tag. For example:
-
-```html
-<head>
-	<script type="text/javascript">
-		// paste snippet from dist/css_tagger.min.js
-	</script>
-</head>
 ```
 
 ## Debugging
